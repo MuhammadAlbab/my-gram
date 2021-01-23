@@ -112,6 +112,7 @@ export default {
                     image: fileRef
                 }
                 await itemsCollection.add(data)
+                this.$emit('item:added', data)
                 this.resetForm()
                 this.isLoading = false
                 this.dialog = false

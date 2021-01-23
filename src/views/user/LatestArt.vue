@@ -1,7 +1,7 @@
 <template>
   <v-container>
       <h1>Latest Arts for you!</h1>
-      <p v-if="items.length == 0">Sorry, no arts found!</p>
+      <p v-if="items.length == 0">Sorry, this might take a while!</p>
       <v-col 
         sm="4"
         md="6">
@@ -61,7 +61,7 @@ export default {
             }
         },
     },
-    async mounted(){
+    async created(){
         await this.getItems()
     }
 }
