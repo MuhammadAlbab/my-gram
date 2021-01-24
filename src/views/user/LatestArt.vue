@@ -1,30 +1,43 @@
 <template>
   <v-container>
-      <h1>Latest Arts for you!</h1>
-      <p v-if="items.length == 0">Sorry, this might take a while!</p>
-      <v-col 
-        sm="4"
-        md="6">
-        <v-card
-        v-for="item in items" :key="item.id">
-            <v-img 
-            v-if="item.image"
-            height="250"
-            :src="item.image"
-            lazy-src="https://via.placeholder.com/250">
-            </v-img>
-            <v-card-title>
-                {{item.name}}
-            </v-card-title>
-            <v-card-text>
-                <p class="body-1">{{item.description}}</p>
-                <p class="body-1">{{item.price}}</p>
-                <p class="body-1">Posted by: {{item.author}}</p>
-            </v-card-text>
-            <v-btn block dark color="orange lighten-2">See more details</v-btn>
-        </v-card>
+    <v-row
+    class="text-center">
+        <v-col
+        cols="12">
+            <h1>Latest Arts for you!</h1>
         </v-col>
-  </v-container>
+        <v-col
+        cols="12">
+            <v-progress-circular v-if="items.length == 0"
+            :size="50"
+            color="orange"
+            indeterminate
+            ></v-progress-circular>
+        </v-col>
+    </v-row>
+        <v-col 
+            sm="4"
+            md="6">
+            <v-card
+            v-for="item in items" :key="item.id">
+                <v-img 
+                v-if="item.image"
+                height="250"
+                :src="item.image"
+                lazy-src="https://via.placeholder.com/250">
+                </v-img>
+                <v-card-title>
+                    {{item.name}}
+                </v-card-title>
+                <v-card-text>
+                    <p class="body-1">{{item.description}}</p>
+                    <p class="body-1">{{item.price}}</p>
+                    <p class="body-1">Posted by: {{item.author}}</p>
+                </v-card-text>
+                <v-btn block dark color="orange lighten-2">See more details</v-btn>
+            </v-card>
+        </v-col>
+    </v-container>
 </template>
 
 <script>
@@ -67,6 +80,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+.v-progress-circular {
+  margin: 1rem;
+}
 </style>

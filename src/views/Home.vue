@@ -5,20 +5,20 @@
     <section>
       <v-parallax :src="imageLink.main" height="550">
         <v-layout column align-center justify-center class="white--text">
-          <h1 class="white--text mb-2 display-1 text-center" style="font-weight: 900; text-shadow: 3px 2px orange">It's time to monetize your creativity</h1>
-          <div class="white--text subheading mb-3 text-center" style="font-weight: 900; text-shadow: 2px 2px orange">Unleash your creativity without limitations</div>
+          <h1 class="white--text display-2 text-center" style="font-weight: 900; text-shadow: 3px 2px orange">Sell-Art</h1>
+          <h1 class="white--text mb-3 display-1 text-center" style="font-weight: 900; text-shadow: 3px 2px orange">It's time to monetize your creativity</h1>
+          <div class="white--text mb-5 subheading text-center" style="font-weight: 900; text-shadow: 2px 2px orange">Unleash your creativity without limitations</div>
+          <v-btn
+            dark
+            @click="registerDialog = !registerDialog" 
+            color="orange lighten-2">
+            Get Started
+          </v-btn>
           <v-dialog
-          v-model="$store.state.registerDialog"
+          v-model="registerDialog"
           transition="dialog-bottom-transition"
           max-width="400"
           >
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-              class="orange lighten-1 mt-5" dark large
-              v-bind="attrs"
-              v-on="on"
-              >Get Started</v-btn>
-            </template>
             <RegisterDialog />
           </v-dialog>
           
@@ -129,6 +129,7 @@ export default {
   },
   data(){
     return {
+      registerDialog: false,
       imageLink: {
         main: require('@/assets/first.jpg'),
         logo: require('@/assets/logo-bar.png'),

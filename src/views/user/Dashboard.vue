@@ -149,12 +149,13 @@ export default {
         },
         async deleteItem(){
             try {
+                //delete from cloud firestore 
                 await itemsCollection.doc(this.pId).delete()
-                alert('Item is deleted')
                 this.items.splice(this.items.findIndex(element => element.id == this.pId), 1)
                 this.deleteDialog = false
                 this.pId = null
                 this.pName = null
+                alert('Item is deleted')
             } catch (error) {
                 console.log(error);
             }

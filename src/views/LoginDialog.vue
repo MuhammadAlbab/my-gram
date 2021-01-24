@@ -1,4 +1,4 @@
-<template v-slot:default="dialog">
+<template>
     <v-card>
         <v-form
         ref="form"
@@ -8,7 +8,7 @@
                 type="error" 
                 :value="loginAlert"
                 transition="slide-y-transition">
-                Maaf anda belum terdaftar, lakukan register terlebih dahulu!
+                Maaf anda belum terdaftar, lakukan register terlebih dahulu! atau pastikan data yang anda masukan benar!
             </v-alert>
             <v-card-text>
             <v-text-field
@@ -29,6 +29,7 @@
                 <v-btn
                 text dark class="orange lighten-2"
                 @click="clickLogin"
+                :loading="isLoading"
                 >
                 Login
                 </v-btn>
@@ -49,20 +50,26 @@ export default {
                 v => !!v || 'E-mail is required',
                 v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
             ],
+            isLoading: false
             
         }
     },
     methods: {
-        clickLogin(){
-            if (this.$refs.form.validate()){
-                this.$store.dispatch('login', {
-                    email: this.email,
-                    password: this.password,
-                })
-                this.$store.state.welcomeNotif = true
-            }else{
+        async clickLogin(){
+            try {
+                if (this.$refs.form.validate()){
+                    this.isLoading = true
+                    await this.$store.dispatch('login', {
+                        email: this.email,
+                        password: this.password,
+                    })
+                    this.$store.state.welcomeNotif = true
+                }
+            } catch (error) {
                 this.loginAlert = true
+                this.isLoading = false
             }
+            
         },
         clickPassword(){
             this.showPassword = !this.showPassword

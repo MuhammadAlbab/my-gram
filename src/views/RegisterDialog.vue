@@ -1,4 +1,4 @@
-<template v-slot:default="dialog">
+<template>
     <v-card>
         <v-form
         ref="form"
@@ -35,6 +35,7 @@
                 <v-btn
                 text dark class="orange lighten-2"
                 @click="clickRegister"
+                :loading="isLoading"
                 >
                 Register
                 </v-btn>
@@ -57,15 +58,17 @@ export default {
                 v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
             ],
             passwordRules: [
-                v => (v && v.length <= 8) || 'Password must be more than 7 characters'
-            ]
+                v => (v && v.length >= 8) || 'Password must be more than 7 characters'
+            ],
+            isLoading: false
             
         }
     },
     methods: {
-        clickRegister(){
+        async clickRegister(){
             if (this.$refs.form.validate()){
-                this.$store.dispatch('register', {
+                this.isLoading = true
+                await this.$store.dispatch('register', {
                     username: this.username,
                     email: this.email,
                     password: this.password,
