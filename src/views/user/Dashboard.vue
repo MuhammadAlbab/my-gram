@@ -1,168 +1,100 @@
 <template>
     <v-container>
+        <!-- Welcome Notif -->
         <v-row>
             <v-col cols="12">
                 <v-alert
-                v-model="$store.state.welcomeNotif"
+                v-model="welcomeNotif"
                 dismissible
                 color="orange"
                 border="left"
                 elevation="2"
                 colored-border
-                icon="mdi-check-circle"
                 >
                 Welcome to SellArt, {{userProfile.username}}! 
                 </v-alert>
             </v-col>  
         </v-row>
-        <!--  -->
+        <!-- Loading Data -->
         <v-row>
-            <ItemsForm @item:added="addItem"/>
-        </v-row>
-        <!--  -->
-        <v-row>
-            <v-dialog
-            v-model="deleteDialog"
-            max-width="400">
-                <v-card>
-                    <v-card-title class="headline">
-                        Delete item?
-                    </v-card-title>
-                    <v-card-text>
-                        Are you sure you want to delete <b> {{pName}}</b> ?
-                    </v-card-text>
-                        <v-card-actions>
-                            <v-btn text color="red" @click="deleteItem">
-                                Delete
-                            </v-btn>
-                            <v-btn @click="deleteDialog = false" text color="secondary"> 
-                                Close
-                            </v-btn>
-                        </v-card-actions>
-                </v-card>
-            </v-dialog>
-            <v-col 
-            sm="4"
-            md="6">
-            <v-card
-            v-for="item in items" :key="item.id">
-                <v-img 
-                v-if="item.image"
-                height="250"
-                :src="item.image"
-                lazy-src="https://via.placeholder.com/250">
-                </v-img>
-                <v-card-title>
-                    {{item.name}}
-                </v-card-title>
-                <v-card-text>
-                    <p class="subtittle-1">{{item.description}}</p>
-                    <p class="subtittle-1">{{item.price}}</p>
-                </v-card-text>
-                <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <ItemsForm :item="item" :index="index" @item:updated="updateItem"/>
-                    <v-btn color="red" @click="deleteConfirm(item.id, item.name)" text>Delete</v-btn>
-                </v-card-actions>
-            </v-card>
+            <v-col class="text-center">
+                <AddItem />
+            </v-col>
+            <v-col
+            class="text-center"
+            cols="12">
+                <v-progress-circular v-if="itemsByUser.length == 0"
+                :size="50"
+                color="orange"
+                indeterminate>
+                </v-progress-circular>
             </v-col>
         </v-row>
+        <!-- Display -->
+        <div>
+            <v-card
+            class="d-flex flex-wrap justify-space-around"
+            flat
+            tile>
+                <v-card
+                v-for="(item, index) in itemsByUser" :key="item.id"
+                class="ma-2">
+                    <v-img 
+                    v-if="item.image"
+                    height="400"
+                    width="400"
+                    class="white--text align-start"
+                    :src="item.image"
+                    lazy-src="https://via.placeholder.com/250">
+                    <v-card-title>
+                        {{item.name}}
+                    </v-card-title>
+                    </v-img>
+                    <v-card-text>
+                        <p class="subtittle-1">{{item.description}}</p>
+                        <p class="subtittle-1">{{item.price}}</p>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer />
+                        <EditItem :item="item" :index="index"/>
+                        <DeleteItem :item="item" :index="index"/>
+                    </v-card-actions>
+                </v-card>
+            </v-card>        
+        </div>
     </v-container>
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import {auth, storage, itemsCollection} from '../../firebase'
-import ItemsForm from '../user/ItemsForm'
+import { mapState, mapActions} from 'vuex'
+import { auth } from '../../firebase'
+import AddItem from '../user/AddItem'
+import EditItem from '../user/EditItem'
+import DeleteItem from '../user/DeleteItem'
 
 export default {
     name: 'Dashboard',
     components: {
-        ItemsForm,
+        AddItem,
+        EditItem,
+        DeleteItem,
     },
     data(){
         return{
-            items: [],
-            index: '',
-            pId: null,
-            pName: null,
-            deleteDialog: false,
+            welcomeNotif: true,
         }
     },
     computed: {
-    ...mapState(['userProfile'])
+        ...mapState(['userProfile', 'itemsByUser']),
     },
     methods: {
-        async addItem(doc){
-            let img = ''
-            if (doc.image){
-                img = await storage.ref().child(doc.image).getDownloadURL()
-            }
-            this.items.push({
-                id: doc.id,
-                name: doc.name,
-                description: doc.description,
-                price: doc.price,
-                image: img,
-                img: doc.image
-            })
-        },
-        async updateItem(doc){
-            let img = ''
-            if (doc.image){
-                img = await storage.ref().child(doc.image).getDownloadURL()
-            }
-            this.items.splice(doc.index, 1,{
-                id: doc.id,
-                name: doc.name,
-                description: doc.description,
-                price: doc.price,
-                image: img,
-                img: doc.image
-            })
-        },
-        async getItems(){
-            try {
-                const querySnapShot = await itemsCollection.where('userId', '==', auth.currentUser.uid).get()
-                querySnapShot.forEach( async (doc) => {
-                    let img = ''
-                    if (doc.data().image){
-                        img = await storage.ref().child(doc.data().image).getDownloadURL()
-                    }
-                    this.items.push({
-                        id: doc.id,
-                        name: doc.data().name,
-                        description: doc.data().description,
-                        price: doc.data().price,
-                        image: img,
-                        img: doc.data().image
-                    })
-                })
-            } catch (error) {
-                console.log(error);
-            }
-        },
-        async deleteConfirm(id, name){
-            this.deleteDialog = true
-            this.pId = id
-            this.pName = name
-        },
-        async deleteItem(){
-            try {
-                //delete from cloud firestore 
-                await itemsCollection.doc(this.pId).delete()
-                this.items.splice(this.items.findIndex(element => element.id == this.pId), 1)
-                this.deleteDialog = false
-                this.pId = null
-                this.pName = null
-                alert('Item is deleted')
-            } catch (error) {
-                console.log(error);
-            }
-        }
+        ...mapActions(['getUserProfile', 'getItemsByUser']),
+        
     },
-    async mounted(){
-        await this.getItems()
-    }
+    async created(){
+        await this.getUserProfile(auth.currentUser)
+        await this.getItemsByUser()
+    },
+
 }
 </script>

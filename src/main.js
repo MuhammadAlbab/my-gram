@@ -8,8 +8,8 @@ import { auth } from '../src/firebase'
 
 Vue.prototype.$axios = axios
 Vue.config.productionTip = false
-let app
 
+let app
 auth.onAuthStateChanged(() => {
   if(!app){
     new Vue({

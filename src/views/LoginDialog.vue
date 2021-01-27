@@ -63,13 +63,11 @@ export default {
                         email: this.email,
                         password: this.password,
                     })
-                    this.$store.state.welcomeNotif = true
                 }
             } catch (error) {
                 this.loginAlert = true
                 this.isLoading = false
             }
-            
         },
         clickPassword(){
             this.showPassword = !this.showPassword

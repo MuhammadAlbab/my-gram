@@ -8,9 +8,9 @@
             <strong>Sell-Art</strong>
         </v-toolbar-title>
         <v-spacer />
-        <v-toolbar-items class="mr-2">
+        <v-toolbar-items>
             <v-btn
-            text 
+            text
             link to="/latestarts"
             >The latest arts</v-btn>
         </v-toolbar-items>
@@ -19,7 +19,7 @@
             dark
             @click="loginDialog = !loginDialog" 
             color="orange lighten-2">
-            Login
+                Login
             </v-btn>
             <v-dialog
             v-model="loginDialog"
@@ -40,7 +40,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import {auth} from'../firebase'
 import LoginDialog from '@/views/LoginDialog.vue'
 export default {
@@ -66,7 +65,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['getLoginDialog'])
+        
     },
     mounted(){
         this.isAuthenticated = auth.currentUser;
@@ -76,6 +75,6 @@ export default {
 
 <style>
     .btn-nav {
-        margin: 0px 10px;
+        /* margin: 0px 10px; */
     }
 </style>

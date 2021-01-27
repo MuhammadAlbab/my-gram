@@ -8,80 +8,110 @@
         </v-col>
         <v-col
         cols="12">
-            <v-progress-circular v-if="items.length == 0"
+            <v-progress-circular v-if="allItems.length == 0"
             :size="50"
             color="orange"
             indeterminate
             ></v-progress-circular>
         </v-col>
     </v-row>
-        <v-col 
-            sm="4"
-            md="6">
-            <v-card
-            v-for="item in items" :key="item.id">
+    <div>
+        <v-card
+        class="d-flex flex-wrap justify-space-around"
+        flat
+        tile>
+            <v-card v-for="(item, index) in allItems" :key="item.id"
+            class="ma-2"
+            >
                 <v-img 
                 v-if="item.image"
-                height="250"
+                height="400"
+                width="400"
                 :src="item.image"
-                lazy-src="https://via.placeholder.com/250">
-                </v-img>
+                class="white--text align-start"
+                lazy-src="https://via.placeholder.com/400">
                 <v-card-title>
                     {{item.name}}
                 </v-card-title>
-                <v-card-text>
-                    <p class="body-1">{{item.description}}</p>
-                    <p class="body-1">{{item.price}}</p>
-                    <p class="body-1">Posted by: {{item.author}}</p>
-                </v-card-text>
-                <v-btn block dark color="orange lighten-2">See more details</v-btn>
+                </v-img>
+                <v-card-actions>
+                    <v-btn 
+                    text
+                    @click="moreDetails = index">
+                        More details
+                    </v-btn>
+                    <v-spacer></v-spacer>
+                    <v-btn 
+                    icon>
+                        <v-icon>mdi-heart</v-icon>
+                    </v-btn>
+
+                    <v-btn 
+                    icon>
+                        <v-icon>mdi-bookmark</v-icon>
+                    </v-btn>
+                </v-card-actions>
+                <v-expand-transition>
+                    <v-card
+                    v-show="moreDetails == index"
+                    class="transition-fast-in-fast-out v-card--moreDetails"
+                    
+                    >
+                        <v-card-text>
+                            <p class="display-1 text--primary">{{item.name}}</p>
+                            <p>{{item.description}}</p>
+                            <p>Rp.{{item.price}}</p>
+                            <p>Posted by: {{item.author}}</p>
+                            <p><a :href="item.image" target="_blank">Full Size Image</a></p>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn
+                            dark
+                            color="red"
+                            @click="moreDetails = -1">
+                                Close
+                            </v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-expand-transition>
             </v-card>
-        </v-col>
+        </v-card>
+    </div>
     </v-container>
 </template>
 
 <script>
-import { storage, itemsCollection, usersCollection } from '../../firebase'
+import { mapState, mapActions } from 'vuex'
 export default {
     name: 'LatestArt',
     data(){
         return{
-            items: [],
+            moreDetails: -1,
         }
     },
+    computed:{
+        ...mapState(['allItems'])
+    },
     methods: {
-        async getItems(){
-            try {
-                const querySnapShot = await itemsCollection.get()
-                querySnapShot.forEach( async (doc) => {
-                    let img = ''
-                    if (doc.data().image){
-                        img = await storage.ref().child(doc.data().image).getDownloadURL()
-                    }
-                    const authorQuery = await usersCollection.doc(doc.data().userId).get()
-                    this.items.push({
-                        id: doc.id,
-                        name: doc.data().name,
-                        description: doc.data().description,
-                        price: doc.data().price,
-                        image: img,
-                        img: doc.data().image,
-                        author: authorQuery.data().username
-                    })
-                })
-            } catch (error) {
-                console.log(error);
-            }
-        },
+        ...mapActions(['getAllItems']),
     },
     async created(){
-        await this.getItems()
+        await this.getAllItems()
     }
 }
 </script>
 
 <style scoped>
-.v-progress-circular {
-  margin: 1rem;
-}
+    .v-progress-circular {
+        margin: 1rem;
+    }
+
+    .v-card--moreDetails {
+        /* height: 100%; */
+        bottom: 0;
+        opacity: 1 !important;
+        position: absolute;
+        width: 100%;
+    }
 </style>
