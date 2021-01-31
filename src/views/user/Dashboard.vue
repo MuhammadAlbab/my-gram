@@ -45,17 +45,23 @@
                     width="400"
                     class="white--text align-start"
                     :src="item.image"
-                    lazy-src="https://via.placeholder.com/250">
+                    lazy-src="https://via.placeholder.com/400">
                     <v-card-title>
-                        {{item.name}}
+                        {{item.name | trimLengthName}}
                     </v-card-title>
+                    <v-card-subtitle class="white--text">
+                        {{item.createdOn | formatDate}}
+                    </v-card-subtitle>
+                    <v-card-text>
+                        <v-icon dark>mdi-heart</v-icon>
+                        {{item.likes}}
+                    </v-card-text>
                     </v-img>
                     <v-card-text>
-                        <p class="subtittle-1">{{item.description}}</p>
+                        <p class="subtittle-1">{{item.description | trimLengthDesc}}</p>
                         <p class="subtittle-1">{{item.price}}</p>
                     </v-card-text>
-                    <v-card-actions>
-                        <v-spacer />
+                    <v-card-actions class="justify-end">
                         <EditItem :item="item" :index="index"/>
                         <DeleteItem :item="item" :index="index"/>
                     </v-card-actions>
@@ -68,9 +74,10 @@
 <script>
 import { mapState, mapActions} from 'vuex'
 import { auth } from '../../firebase'
-import AddItem from '../user/AddItem'
-import EditItem from '../user/EditItem'
-import DeleteItem from '../user/DeleteItem'
+import moment from 'moment'
+import AddItem from '../user/manageData/AddItem'
+import EditItem from '../user/manageData/EditItem'
+import DeleteItem from '../user/manageData/DeleteItem'
 
 export default {
     name: 'Dashboard',
@@ -90,6 +97,21 @@ export default {
     methods: {
         ...mapActions(['getUserProfile', 'getItemsByUser']),
         
+    },
+    filters: {
+        formatDate(val) {
+            if (!val) { return '-' }
+            let date = val.toDate()
+            return moment(date).fromNow()
+        },
+        trimLengthDesc(val) {
+            if (val.length < 50) { return val }
+            return `${val.substring(0, 50)}...`
+        },
+        trimLengthName(val) {
+            if (val.length < 20) { return val }
+            return `${val.substring(0, 20)}...`
+        }
     },
     async created(){
         await this.getUserProfile(auth.currentUser)

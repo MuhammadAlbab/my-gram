@@ -74,7 +74,5 @@ export default {
 </script>
 
 <style>
-    .btn-nav {
-        /* margin: 0px 10px; */
-    }
+
 </style>

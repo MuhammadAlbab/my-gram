@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import router from '../router'
 import * as fb from '../firebase'
+import {auth} from '@/firebase'
 
 Vue.use(Vuex)
 export default new Vuex.Store({
@@ -53,22 +54,30 @@ export default new Vuex.Store({
     //Manage data
     async getAllItems({commit}){
       try {
+        //get data once
+        const querySnapshot = await fb.itemsCollection.orderBy('createdOn', 'desc').get()
         const myItems = []
-        const querySnapShot = await fb.itemsCollection.get()
-        querySnapShot.forEach( async (doc) => {
+        querySnapshot.forEach( async (doc) => {
           let img = ''
           if (doc.data().image){
             img = await fb.storage.ref().child(doc.data().image).getDownloadURL()
           }
           const authorQuery = await fb.usersCollection.doc(doc.data().userId).get()
+          const ownLikes = await fb.likesCollection.doc(auth.currentUser.uid + doc.id).get()
           let item = {
             id: doc.id,
             name: doc.data().name,
             description: doc.data().description,
             price: doc.data().price,
+            createdOn: doc.data().createdOn,
+            likes: doc.data().likes,
             image: img,
             img: doc.data().image,
-            author: authorQuery.data().username
+            author: authorQuery.data().username,
+            likedItems: {
+              itemId: (ownLikes.exists) ? ownLikes.data().itemId : null,
+              userId: (ownLikes.exists) ? ownLikes.data().userId : null,
+            }
           }
           myItems.push(item)
         })
@@ -79,9 +88,10 @@ export default new Vuex.Store({
     },
     async getItemsByUser({commit}){
       try {
-        const myItems = []
-        const querySnapShot = await fb.itemsCollection.where('userId', '==', fb.auth.currentUser.uid).get()
-        querySnapShot.forEach( async (doc) => {
+        //get real time data
+        fb.itemsCollection.where('userId', '==', fb.auth.currentUser.uid).orderBy('createdOn', 'desc').onSnapshot(snapshot => {
+          const myItems = []
+          snapshot.forEach( async (doc) => {
             let img = ''
             if (doc.data().image){
                 img = await fb.storage.ref().child(doc.data().image).getDownloadURL()
@@ -91,16 +101,51 @@ export default new Vuex.Store({
                 name: doc.data().name,
                 description: doc.data().description,
                 price: doc.data().price,
+                createdOn: doc.data().createdOn,
+                likes: doc.data().likes,
                 image: img,
                 img: doc.data().image
             }
-          myItems.push(item)
-        })
+            myItems.push(item)
+          })
         commit('setItemsByUser', myItems)
+        })
       }catch (error) {
         console.log(error);
       }
     },
+
+    /* eslint-disable */
+    async likeItem ({commit}, item) {
+      const userId = fb.auth.currentUser.uid
+      const docId = userId + item.id
+      // check if user has likedItems item
+      const doc = await fb.likesCollection.doc(docId).get()
+      if (doc.exists) { 
+        // delete item
+        await fb.likesCollection.doc(docId).delete()
+        // update item likes count
+        fb.itemsCollection.doc(item.id).update({
+          likes: item.likesCount - 1
+        })
+        this.state.allItems[item.index].likes = item.likesCount - 1;
+        this.state.allItems[item.index].likedItems.itemId = null;
+        this.state.allItems[item.index].likedItems.userId = null;
+      }else{
+        // create item
+        await fb.likesCollection.doc(docId).set({
+          itemId: item.id,
+          userId: userId
+        })
+        // update item likes count
+        fb.itemsCollection.doc(item.id).update({
+          likes: item.likesCount + 1
+        })
+        this.state.allItems[item.index].likes = item.likesCount + 1;
+        this.state.allItems[item.index].likedItems.itemId = item.id;
+        this.state.allItems[item.index].likedItems.userId = userId;
+      }
+    }
   },
 
   getters: {

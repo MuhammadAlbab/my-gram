@@ -15,14 +15,22 @@
                 Delete item?
             </v-card-title>
             <v-card-text>
-                Are you sure you want to delete <b> {{item.name}}</b> ?
+                Are you sure to delete <b> {{item.name}}</b> ?
             </v-card-text>
             <v-card-actions>
-                <v-btn text color="red" @click="deleteItem">
-                    Delete
+                <v-spacer></v-spacer>
+                <v-btn 
+                text 
+                color="red" 
+                @click="deleteItem"
+                :loading="isLoading">
+                Delete
                 </v-btn>
-                <v-btn @click="dialog = false" text color="secondary"> 
-                    Close
+                <v-btn 
+                text
+                @click="dialog = false" 
+                color="secondary"> 
+                Close
                 </v-btn>
             </v-card-actions>
         </v-card>
@@ -30,7 +38,7 @@
 </template>
 
 <script>
-import { storage, itemsCollection } from '../../firebase'
+import { storage, itemsCollection } from '../../../firebase'
 import { mapActions } from 'vuex'
 export default {
     name: 'DeleteItem',
@@ -41,6 +49,7 @@ export default {
     data(){
         return {
             dialog: false,
+            isLoading: false
         }
     },
     computed: {
@@ -50,15 +59,18 @@ export default {
         
         async deleteItem(){
             try {
+                this.isLoading = true
                 //delete from cloud firestore 
                 let pId = this.item.id
                 await itemsCollection.doc(pId).delete()
                 //delete from storage
                 let pImg = this.item.img
                 await storage.ref(pImg).delete()
+                // then continue...
+                this.isLoading = false
                 this.dialog = false
-                alert('Item is deleted')
                 await this.getItemsByUser
+                alert('Item is deleted')
             } catch (error) {
                 console.log(error);
             }

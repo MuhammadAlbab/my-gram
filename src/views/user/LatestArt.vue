@@ -31,8 +31,11 @@
                 class="white--text align-start"
                 lazy-src="https://via.placeholder.com/400">
                 <v-card-title>
-                    {{item.name}}
+                    {{item.name | trimLengthName}}
                 </v-card-title>
+                <v-card-subtitle class="white--text">
+                    {{item.createdOn | formatDate}}
+                </v-card-subtitle>
                 </v-img>
                 <v-card-actions>
                     <v-btn 
@@ -40,37 +43,41 @@
                     @click="moreDetails = index">
                         More details
                     </v-btn>
-                    <v-spacer></v-spacer>
-                    <v-btn 
-                    icon>
+                    <v-spacer> </v-spacer>
+                    <v-list-item-action-text>
+                        {{item.likes}}
+                    </v-list-item-action-text>
+                    <v-btn
+                    icon
+                    @click="likeButton(item.id, item.likes, index)"
+                    :color="(item.likedItems.itemId == item.id) ? 'orange' : ''"
+                    :disabled="isDisabled">
                         <v-icon>mdi-heart</v-icon>
                     </v-btn>
-
-                    <v-btn 
+                    <v-btn
+                    @click="cartButton(item.id)"
                     icon>
-                        <v-icon>mdi-bookmark</v-icon>
+                        <v-icon>mdi-cart</v-icon>
                     </v-btn>
                 </v-card-actions>
                 <v-expand-transition>
                     <v-card
                     v-show="moreDetails == index"
-                    class="transition-fast-in-fast-out v-card--moreDetails"
-                    
-                    >
+                    class="transition-fast-in-fast-out v-card--moreDetails">
                         <v-card-text>
                             <p class="display-1 text--primary">{{item.name}}</p>
-                            <p>{{item.description}}</p>
+                            <p>{{item.description | trimLengthDesc}}</p>
                             <p>Rp.{{item.price}}</p>
                             <p>Posted by: {{item.author}}</p>
                             <p><a :href="item.image" target="_blank">Full Size Image</a></p>
                         </v-card-text>
-                        <v-card-actions>
-                            <v-spacer></v-spacer>
+                        <v-card-actions class="justify-end">
                             <v-btn
+                            text
                             dark
                             color="red"
                             @click="moreDetails = -1">
-                                Close
+                            Close
                             </v-btn>
                         </v-card-actions>
                     </v-card>
@@ -82,23 +89,63 @@
 </template>
 
 <script>
+import {auth} from'../../firebase'
 import { mapState, mapActions } from 'vuex'
+import moment from 'moment'
 export default {
     name: 'LatestArt',
     data(){
         return{
             moreDetails: -1,
+            isDisabled: false,
         }
     },
     computed:{
-        ...mapState(['allItems'])
+        ...mapState(['allItems']),
     },
     methods: {
-        ...mapActions(['getAllItems']),
+        ...mapActions(['getAllItems', 'likeItem']),
+
+        likeButton(id, likesCount, index){
+            if (auth.currentUser){
+                this.isDisabled = true
+                this.likeItem({id,likesCount,index})
+            }else{
+                alert('you need to login first')
+            }
+            setTimeout(() => {
+                this.isDisabled = false
+            }, 1000);
+        },
+
+        cartButton(){
+            if (auth.currentUser){
+                console.log('added to cart');
+            }else{
+                console.log('need to login');
+            }
+        },
+
+    },
+    filters: {
+        formatDate(val) {
+            if (!val) { return '-' }
+            let date = val.toDate()
+            return moment(date).fromNow()
+        },
+        trimLengthDesc(val) {
+            if (val.length < 50) { return val }
+            return `${val.substring(0, 50)}...`
+        },
+        trimLengthName(val) {
+            if (val.length < 20) { return val }
+            return `${val.substring(0, 20)}...`
+        }
     },
     async created(){
         await this.getAllItems()
-    }
+    },
+    
 }
 </script>
 
@@ -109,9 +156,9 @@ export default {
 
     .v-card--moreDetails {
         /* height: 100%; */
+        width: 100%;
         bottom: 0;
         opacity: 1 !important;
         position: absolute;
-        width: 100%;
     }
 </style>

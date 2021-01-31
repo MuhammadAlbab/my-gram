@@ -21,14 +21,18 @@
                 lazy-validation 
                 ref="form">
                     <v-text-field
+                    outlined
                     v-model="name"
                     label="Name"
                     ></v-text-field>
-                    <v-text-field
+                    <v-textarea
+                    outlined
                     v-model="description"
+                    name="input-7-1"
                     label="Description"
-                    ></v-text-field>
+                    ></v-textarea>
                     <v-text-field
+                    outlined
                     v-model="price"
                     label="Price"
                     ></v-text-field>
@@ -42,15 +46,18 @@
                     <p>Current Image: <a v-if="oldImage" :href="oldImage" target="_blank">Here</a></p>
                     <v-card-actions class="justify-center">
                         <v-btn
-                            elevation="2"
-                            color="primary"
-                            @click="updateItem"
-                            :loading="isLoading">
-                            Update
+                        dark
+                        elevation="2"
+                        color="orange"
+                        @click="updateItem"
+                        :loading="isLoading">
+                        Update
                         </v-btn>
                         <v-btn
-                            @click="dialog = !dialog">
-                            Close
+                        dark
+                        color="red"
+                        @click="dialog = !dialog">
+                        Close
                         </v-btn>
                     </v-card-actions>
                 </v-form>
@@ -61,7 +68,7 @@
 
 <script>
 import { mapActions } from 'vuex'
-import {auth, storage, itemsCollection} from '../../firebase'
+import {auth, storage, itemsCollection} from '../../../firebase'
 export default {
     name: 'EditItem',
     components: {
@@ -86,7 +93,7 @@ export default {
     methods: {
         async updateItem(){
             try {
-                this.isLoading = false
+                this.isLoading = true
                 let data = {
                     userId: auth.currentUser.uid,
                     name: this.name,
@@ -106,11 +113,9 @@ export default {
                 } else {
                     data.image = this.item.img
                 }
-
                 await itemsCollection.doc(this.item.id).update(data)
                 this.isLoading = false
                 this.dialog = false
-                data.index = this.index
                 await this.getItemsByUser
                 alert('item updated')
             }catch(error){
