@@ -1,14 +1,14 @@
 <template>
-  <v-container>
+    <v-container>
     <v-row
     class="text-center">
         <v-col
         cols="12">
-            <h1>Latest Arts for you!</h1>
+            <h1>Your Favorite ones!</h1>
         </v-col>
         <v-col
         cols="12">
-            <v-progress-circular v-if="allItems.length == 0"
+            <v-progress-circular v-if="favItems.length == 0"
             :size="50"
             color="orange"
             indeterminate
@@ -20,7 +20,7 @@
         class="d-flex flex-wrap justify-space-around"
         flat
         tile>
-            <v-card v-for="(item, index) in allItems" :key="item.id"
+            <v-card v-for="(item, index) in favItems" :key="item.id"
             class="ma-2"
             >
                 <v-img 
@@ -93,19 +93,18 @@
 import { mapState, mapActions } from 'vuex'
 import moment from 'moment'
 export default {
-    name: 'LatestArt',
+    name: 'YourFav',
     data(){
         return{
             moreDetails: -1,
             isDisabled: false,
         }
     },
-    computed:{
-        ...mapState(['allItems']),
+    computed: {
+        ...mapState(['favItems'])
     },
     methods: {
-        ...mapActions(['getAllItems', 'likeItem']),
-
+        ...mapActions(['getFavItems','likeItem']),
         likeButton(id, likesCount, index){
             this.isDisabled = true
             this.likeItem({id,likesCount,index})
@@ -113,13 +112,6 @@ export default {
                 this.isDisabled = false
             }, 1000);
         },
-
-        // cartButton(){
-        //     if (auth.currentUser){
-        //         console.log('added to cart');
-        //     }else{
-        //         console.log('need to login');
-        //     }
     },
     filters: {
         formatDate(val) {
@@ -137,13 +129,13 @@ export default {
         }
     },
     async created(){
-        await this.getAllItems()
-    },
-    
+        await this.getFavItems()
+    }
 }
 </script>
 
 <style scoped>
+
     .v-progress-circular {
         margin: 1rem;
     }
@@ -155,4 +147,5 @@ export default {
         opacity: 1 !important;
         position: absolute;
     }
+
 </style>

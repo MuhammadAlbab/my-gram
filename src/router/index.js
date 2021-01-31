@@ -26,6 +26,12 @@ const routes = [
     name: 'LatestArts',
     // meta: {auth: true},
     component: () => import(/* webpackChunkName: "login" */ '../views/user/LatestArt.vue')
+  },
+  {
+    path: '/yourfav',
+    name: 'YourFav',
+    // meta: {auth: true},
+    component: () => import(/* webpackChunkName: "login" */ '../views/user/YourFav.vue')
   }
 ]
 

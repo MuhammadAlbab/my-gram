@@ -11,6 +11,7 @@ export default new Vuex.Store({
     userProfile: {},
     allItems: [],
     itemsByUser: [],
+    favItems: [],
   },
 
   mutations: {
@@ -24,6 +25,9 @@ export default new Vuex.Store({
     },
     setItemsByUser(state, payload){
       state.itemsByUser = payload
+    },
+    setFavItems(state, payload){
+      state.favItems = payload
     },
   },
   
@@ -114,13 +118,47 @@ export default new Vuex.Store({
         console.log(error);
       }
     },
+    async getFavItems({commit}){
+      try {
+        //get data once
+        const likesQuery = await fb.likesCollection.where('userId', '==', fb.auth.currentUser.uid).get()
+        const myItems = []
+        likesQuery.forEach (async (doc)  => {
+          const itemsQuery = await fb.itemsCollection.doc(doc.data().itemId).get()
+          let img = ''
+          if (itemsQuery.data().image){
+            img = await fb.storage.ref().child(itemsQuery.data().image).getDownloadURL()
+          }
+          const authorQuery = await fb.usersCollection.doc(itemsQuery.data().userId).get()
+          let item = {
+                id: itemsQuery.id,
+                name: itemsQuery.data().name,
+                description: itemsQuery.data().description,
+                price: itemsQuery.data().price,
+                createdOn: itemsQuery.data().createdOn,
+                likes: itemsQuery.data().likes,
+                image: img,
+                img: itemsQuery.data().image,
+                author: authorQuery.data().username,
+                likedItems: {
+                  itemId: (doc.exists) ? doc.data().itemId : null,
+                  userId: (doc.exists) ? doc.data().userId : null,
+                }
+          }
+          myItems.push(item)
+        })
+        commit('setFavItems', myItems)
+        }catch(error) {
+          console.log(error);
+        }
+    },
 
     /* eslint-disable */
     async likeItem ({commit}, item) {
       const userId = fb.auth.currentUser.uid
       const docId = userId + item.id
-      // check if user has likedItems item
       const doc = await fb.likesCollection.doc(docId).get()
+      // check if user has likedItems item
       if (doc.exists) { 
         // delete item
         await fb.likesCollection.doc(docId).delete()
@@ -128,9 +166,12 @@ export default new Vuex.Store({
         fb.itemsCollection.doc(item.id).update({
           likes: item.likesCount - 1
         })
+        //changes in latestArt page
         this.state.allItems[item.index].likes = item.likesCount - 1;
         this.state.allItems[item.index].likedItems.itemId = null;
         this.state.allItems[item.index].likedItems.userId = null;
+        //delete from favItems page
+        this.state.favItems.splice([item.index], 1)
       }else{
         // create item
         await fb.likesCollection.doc(docId).set({
@@ -141,6 +182,7 @@ export default new Vuex.Store({
         fb.itemsCollection.doc(item.id).update({
           likes: item.likesCount + 1
         })
+        //changes in latestArt page
         this.state.allItems[item.index].likes = item.likesCount + 1;
         this.state.allItems[item.index].likedItems.itemId = item.id;
         this.state.allItems[item.index].likedItems.userId = userId;

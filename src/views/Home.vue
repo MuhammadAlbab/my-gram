@@ -91,7 +91,9 @@
           v-for="item in arrSocmed" :key="item.id"
           xs12 sm2 md1 
           class="text-center">
-            <v-card class="elevation-0 transparent">
+            <v-card class="elevation-0 transparent" 
+              link :href="item.link"
+              target="_blank">
               <v-icon x-large class="orange--text text--lighten-2">{{item.logo}}</v-icon>
             </v-card>
           </v-flex>
@@ -141,10 +143,10 @@ export default {
         {id:4, logo: 'mdi-currency-usd', title: 'Get paid', content: 'Get paid from your hobby is the best thing, Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatibus ipsum, dolorum, porro minus aperiam ipsam ullam, corporis repellat sapiente sequi incidunt exercitationem veniam et accusantium.'},
       ],
       arrSocmed: [
-        {id:1, name: 'Youtube', logo: 'mdi-youtube'},
-        {id:2, name: 'Instagram', logo: 'mdi-instagram'},
-        {id:3, name: 'Twitter', logo: 'mdi-twitter'},
-        {id:4, name: 'Linkedin', logo: 'mdi-linkedin'},
+        {id:1, name: 'Youtube', logo: 'mdi-youtube', link: 'https://www.youtube.com/'},
+        {id:2, name: 'Instagram', logo: 'mdi-instagram', link: 'https://www.instagram.com/'},
+        {id:3, name: 'Twitter', logo: 'mdi-twitter', link: 'https://www.instagram.com/'},
+        {id:4, name: 'Linkedin', logo: 'mdi-linkedin', link: 'https://www.instagram.com/'},
       ],
       arrLast: [
         {id:1, title: 'About Us', content: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Harum assumenda, repudiandae porro incidunt omnis maiores iure facere dolores quaerat nesciunt ipsum officiis aut ab error reiciendis eligendi voluptas deserunt id.'},
