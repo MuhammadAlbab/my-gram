@@ -54,11 +54,6 @@
                     :disabled="isDisabled">
                         <v-icon>mdi-heart</v-icon>
                     </v-btn>
-                    <v-btn
-                    @click="cartButton(item.id)"
-                    icon>
-                        <v-icon>mdi-cart</v-icon>
-                    </v-btn>
                 </v-card-actions>
                 <v-expand-transition>
                     <v-card
@@ -106,20 +101,11 @@ export default {
     methods: {
         ...mapActions(['getAllItems', 'likeItem']),
 
-        likeButton(id, likesCount, index){
+        async likeButton(id, likesCount, index){
             this.isDisabled = true
-            this.likeItem({id,likesCount,index})
-            setTimeout(() => {
-                this.isDisabled = false
-            }, 1000);
+            await this.likeItem({id,likesCount,index})
+            this.isDisabled = false
         },
-
-        // cartButton(){
-        //     if (auth.currentUser){
-        //         console.log('added to cart');
-        //     }else{
-        //         console.log('need to login');
-        //     }
     },
     filters: {
         formatDate(val) {

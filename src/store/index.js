@@ -12,6 +12,7 @@ export default new Vuex.Store({
     allItems: [],
     itemsByUser: [],
     favItems: [],
+    cartItems: [],
   },
 
   mutations: {
@@ -29,6 +30,12 @@ export default new Vuex.Store({
     setFavItems(state, payload){
       state.favItems = payload
     },
+    setCartItems(state, payload){
+      state.cartItems.push(payload)
+    },
+    settledCartItems(state, payload){
+      state.cartItems = payload
+    }
   },
   
   actions: {
@@ -36,8 +43,9 @@ export default new Vuex.Store({
     async getUserProfile({commit}, payload){
       const userProfile  = await fb.usersCollection.doc(payload.uid).get()
       commit('setUserProfile', userProfile.data())
-      //catch the NavigationDuplicated exception and ignore it.
-      router.push('/dashboard').catch(()=>{})
+      if (router.currentRoute.path === '/'){
+        router.push('/dashboard')
+      }
     },
     async register({dispatch}, payload){
       const { user } = await fb.auth.createUserWithEmailAndPassword(payload.email, payload.password)
@@ -125,6 +133,7 @@ export default new Vuex.Store({
         const myItems = []
         likesQuery.forEach (async (doc)  => {
           const itemsQuery = await fb.itemsCollection.doc(doc.data().itemId).get()
+          const cartQuery = await fb.cartCollection.doc(fb.auth.currentUser.uid + doc.data().itemId).get()
           let img = ''
           if (itemsQuery.data().image){
             img = await fb.storage.ref().child(itemsQuery.data().image).getDownloadURL()
@@ -143,6 +152,10 @@ export default new Vuex.Store({
                 likedItems: {
                   itemId: (doc.exists) ? doc.data().itemId : null,
                   userId: (doc.exists) ? doc.data().userId : null,
+                },
+                cartedItems: {
+                  itemId: (cartQuery.exists) ? cartQuery.data().itemId : null,
+                  userId: (cartQuery.exists) ? cartQuery.data().userId : null,
                 }
           }
           myItems.push(item)
@@ -152,9 +165,80 @@ export default new Vuex.Store({
           console.log(error);
         }
     },
+    async getCartItems({commit}){
+      try {
+        const myItems = []
+        const cartQuery = await fb.cartCollection.where('userId', '==', fb.auth.currentUser.uid).get()
+        cartQuery.forEach(async (doc)=> {
+          const itemKu = await fb.itemsCollection.doc(doc.data().itemId).get()
+          let img = ''
+          if (itemKu.data().image){
+            img = await fb.storage.ref().child(itemKu.data().image).getDownloadURL()
+          }
+          const authorQuery = await fb.usersCollection.doc(itemKu.data().userId).get()
+          let item = {
+            id: itemKu.id,
+            name: itemKu.data().name,
+            description: itemKu.data().description,
+            price: itemKu.data().price,
+            createdOn: itemKu.data().createdOn,
+            likes: itemKu.data().likes,
+            image: img,
+            img: itemKu.data().image,
+            author: authorQuery.data().username,
+          }
+          myItems.push(item)
+        })
+        commit('settledCartItems', myItems)
+      } catch (error) {
+        console.log(error);
+      }
+        
+    },
 
-    /* eslint-disable */
-    async likeItem ({commit}, item) {
+    async addToCart ({commit}, item) {
+
+      const userId = fb.auth.currentUser.uid
+      const docId = userId + item.id
+      const doc = await fb.cartCollection.doc(docId).get()
+      // check if user has likedItems item
+      if (doc.exists) { 
+        // delete item
+        await fb.cartCollection.doc(docId).delete()
+        this.state.favItems[item.index].cartedItems.itemId = null;
+        this.state.favItems[item.index].cartedItems.userId = null;
+        this.state.cartItems.splice([item.index], 1)
+      }else{
+        // create item
+        await fb.cartCollection.doc(docId).set({
+          itemId: item.id,
+          userId: userId
+        })
+        const itemKu = await fb.itemsCollection.doc(item.id).get()
+        let img = ''
+        if (itemKu.data().image){
+          img = await fb.storage.ref().child(itemKu.data().image).getDownloadURL()
+        }
+        const authorQuery = await fb.usersCollection.doc(itemKu.data().userId).get()
+        let itemH = {
+          id: item.id,
+          name: itemKu.data().name,
+          description: itemKu.data().description,
+          price: itemKu.data().price,
+          createdOn: itemKu.data().createdOn,
+          likes: itemKu.data().likes,
+          image: img,
+          img: itemKu.data().image,
+          author: authorQuery.data().username,
+        }
+        commit('setCartItems', itemH)
+        this.state.favItems[item.index].cartedItems.itemId = item.id;
+        this.state.favItems[item.index].cartedItems.userId = userId;
+      }
+    },
+
+     /* eslint-disable */
+     async likeItem ({commit}, item) {
       const userId = fb.auth.currentUser.uid
       const docId = userId + item.id
       const doc = await fb.likesCollection.doc(docId).get()
@@ -188,6 +272,7 @@ export default new Vuex.Store({
         this.state.allItems[item.index].likedItems.userId = userId;
       }
     }
+
   },
 
   getters: {

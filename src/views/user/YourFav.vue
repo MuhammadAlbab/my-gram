@@ -55,8 +55,10 @@
                         <v-icon>mdi-heart</v-icon>
                     </v-btn>
                     <v-btn
-                    @click="cartButton(item.id)"
-                    icon>
+                    icon
+                    @click="cartButton(item.id, index)"
+                    :color="(item.cartedItems.itemId == item.id) ? 'green' : ''"
+                    :disabled="isDisabled">
                         <v-icon>mdi-cart</v-icon>
                     </v-btn>
                 </v-card-actions>
@@ -101,16 +103,20 @@ export default {
         }
     },
     computed: {
-        ...mapState(['favItems'])
+        ...mapState(['favItems']),
     },
     methods: {
-        ...mapActions(['getFavItems','likeItem']),
-        likeButton(id, likesCount, index){
+        ...mapActions(['getFavItems','likeItem', 'addToCart']),
+        async likeButton(id, likesCount, index){
             this.isDisabled = true
-            this.likeItem({id,likesCount,index})
-            setTimeout(() => {
-                this.isDisabled = false
-            }, 1000);
+            await this.likeItem({id,likesCount,index})
+            this.isDisabled = false
+        },
+
+        async cartButton(id, index){
+            this.isDisabled = true
+            await this.addToCart({id, index})
+            this.isDisabled = false
         },
     },
     filters: {

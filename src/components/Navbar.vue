@@ -13,9 +13,11 @@
         </v-toolbar-items> -->
         <v-toolbar-items v-if="!isAuthenticated">
             <v-btn
-            dark
-            @click="loginDialog = !loginDialog" 
-            color="orange lighten-2">
+                small
+                dark
+                @click="loginDialog = !loginDialog" 
+                color="orange lighten-2"
+            >
                 Login
             </v-btn>
             <v-dialog
@@ -28,24 +30,41 @@
         </v-toolbar-items>
         <v-toolbar-items v-else>
             <v-btn
+                v-show="myCart > 0"
+                small
+                link to="/cart"
+            >
+                <v-icon
+                small
+                color="green"
+            > 
+                mdi-cart 
+            </v-icon>
+                {{myCart}}
+            </v-btn>
+            <v-btn
+                small
                 text
                 link to="/latestarts"
             >
                 The latest arts
             </v-btn>
             <v-btn
+                small
                 text
                 link to="/yourfav"
             >
                 Your Favorite
             </v-btn>
             <v-btn
+                small
                 text
                 link to="/dashboard"
             >
                 Home
             </v-btn>
             <v-btn
+                small
                 text dark class="red lighten-2"
                 @click="logOut"
             >
@@ -58,6 +77,7 @@
 
 <script>
 import {auth} from'../firebase'
+import { mapActions } from 'vuex'
 import LoginDialog from '@/views/LoginDialog.vue'
 export default {
     name: 'Navbar',
@@ -67,13 +87,20 @@ export default {
     data(){
         return{
             loginDialog: false,
+            cartDialog: false,
             isAuthenticated: '',
             imageLink: {
                 logo: require('@/assets/logo-bar.png'),
             },
         }
     },
+    computed: {
+        myCart(){
+            return this.$store.state.cartItems.length
+        }
+    },
     methods: {
+        ...mapActions(['getCartItems']),
         logOut(){
             this.$store.dispatch('logout')
         },
@@ -81,8 +108,8 @@ export default {
             this.$router.push('/')
         }
     },
-    computed: {
-        
+    async created(){
+        await this.getCartItems()
     },
     mounted(){
         this.isAuthenticated = auth.currentUser;

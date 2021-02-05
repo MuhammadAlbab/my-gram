@@ -24,15 +24,21 @@ const routes = [
   {
     path: '/latestarts',
     name: 'LatestArts',
-    // meta: {auth: true},
+    meta: {auth: true},
     component: () => import(/* webpackChunkName: "login" */ '../views/user/LatestArt.vue')
   },
   {
     path: '/yourfav',
     name: 'YourFav',
-    // meta: {auth: true},
+    meta: {auth: true},
     component: () => import(/* webpackChunkName: "login" */ '../views/user/YourFav.vue')
-  }
+  },
+  {
+    path: '/cart',
+    name: 'Cart',
+    meta: {auth: true},
+    component: () => import(/* webpackChunkName: "login" */ '../views/user/Cart.vue')
+  },
 ]
 
 const router = new VueRouter({

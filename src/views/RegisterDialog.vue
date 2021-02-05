@@ -4,13 +4,13 @@
         ref="form"
         >
             <v-card-text>
-            <v-alert 
-                color="error" 
-                type="error" 
-                :value="registerAlert"
-                transition="slide-y-transition">
-                Gagal Daftar, Coba lagi!
-            </v-alert>
+                <v-alert 
+                    color="error" 
+                    type="error" 
+                    :value="registerAlert"
+                    transition="slide-y-transition">
+                    Gagal Daftar, Coba lagi!
+                </v-alert>
             <v-text-field
             v-model="username"
             label="Name"

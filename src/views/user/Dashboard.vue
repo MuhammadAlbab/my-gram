@@ -73,7 +73,6 @@
 
 <script>
 import { mapState, mapActions} from 'vuex'
-import { auth } from '../../firebase'
 import moment from 'moment'
 import AddItem from '../user/manageData/AddItem'
 import EditItem from '../user/manageData/EditItem'
@@ -95,7 +94,7 @@ export default {
         ...mapState(['userProfile', 'itemsByUser']),
     },
     methods: {
-        ...mapActions(['getUserProfile', 'getItemsByUser']),
+        ...mapActions(['getItemsByUser']),
         
     },
     filters: {
@@ -114,7 +113,6 @@ export default {
         }
     },
     async created(){
-        await this.getUserProfile(auth.currentUser)
         await this.getItemsByUser()
     },
 
