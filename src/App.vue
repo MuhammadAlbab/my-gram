@@ -2,13 +2,6 @@
   <v-app>
     <Navbar />
     <v-main>
-        <v-navigation-drawer
-            v-model="$store.state.cartDrawer"
-            absolute
-            right
-            temporary
-        >
-        </v-navigation-drawer>
         <router-view />
     </v-main>
   </v-app>

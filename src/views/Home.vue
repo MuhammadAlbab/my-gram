@@ -1,7 +1,6 @@
 <template>
   <div class="home">
     <!--  -->
-    <!--  -->
     <section>
       <v-parallax :src="imageLink.main" height="550">
         <v-container class="white--text">
@@ -28,7 +27,7 @@
                 class="display-1 text-center" 
                 style="font-weight: 900; text-shadow: 3px 2px orange"
               >
-                Show your best moment to the world
+                Share your best moment to the world
               </div>
             </v-col>
             <v-btn
@@ -39,9 +38,6 @@
               Get Started
             </v-btn>
           </v-row>
-          <!-- <div class="white--text display-2 text-center" style="font-weight: 900; text-shadow: 3px 2px orange">Sell-Art</div>
-          <div class="white--text mb-3 display-1 text-center" style="font-weight: 900; text-shadow: 3px 2px orange">It's time to monetize your creativity</div>
-          <div class="white--text mb-5 subheading text-center" style="font-weight: 900; text-shadow: 2px 2px orange">Unleash your creativity without limitations</div> -->
           <v-dialog
           v-model="registerDialog"
           transition="dialog-bottom-transition"
@@ -55,12 +51,6 @@
     <!--  -->
     <section>
       <v-container class="my-5"> 
-      <!-- <v-layout
-        column
-        wrap
-        class="my-5"
-        align-center
-      > -->
         <v-row
           align="center"
           justify="center"  
@@ -79,7 +69,7 @@
           </v-col>
           <v-col
             cols="12"
-            md="3"
+            md="4"
             v-for="item in arrSellArt" :key="item.id"
           >
             <v-card class="elevation-0 transparent">
@@ -124,7 +114,7 @@
                 class="white--text subheading text-center" 
                 style="font-weight: 500; text-shadow: 2px 2px orange"
               >
-                With the power of MyGram you don't have to be famous to be able to get likes and comments on your pics, lol :D
+                With the power of MyGram you don't have to be famous to be able to get likes on your pics, lol :D
               </div>
             </v-col>
           </v-row>
@@ -210,7 +200,6 @@ export default {
         {id:1, logo: 'mdi-camera', title: 'Capture your moment', content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Perferendis expedita dignissimos deleniti ullam quam consectetur beatae facilis? Eaque aliquid quae deleniti pariatur atque at soluta cupiditate nulla fugiat nesciunt dicta vero, numquam voluptatibus nemo eveniet aspernatur a maiores harum veniam!'},
         {id:2, logo: 'mdi-earth', title: 'Share to the world', content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Perferendis expedita dignissimos deleniti ullam quam consectetur beatae facilis? Eaque aliquid quae deleniti pariatur atque at soluta cupiditate nulla fugiat nesciunt dicta vero, numquam voluptatibus nemo eveniet aspernatur a maiores harum veniam!'},
         {id:3, logo: 'mdi-account-search', title: 'Explore what other shares', content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Perferendis expedita dignissimos deleniti ullam quam consectetur beatae facilis? Eaque aliquid quae deleniti pariatur atque at soluta cupiditate nulla fugiat nesciunt dicta vero, numquam voluptatibus nemo eveniet aspernatur a maiores harum veniam!'},
-        {id:4, logo: 'mdi-forum', title: 'See what other thinks', content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Perferendis expedita dignissimos deleniti ullam quam consectetur beatae facilis? Eaque aliquid quae deleniti pariatur atque at soluta cupiditate nulla fugiat nesciunt dicta vero, numquam voluptatibus nemo eveniet aspernatur a maiores harum veniam!'},
       ],
       arrSocmed: [
         {id:1, name: 'Youtube', logo: 'mdi-youtube', link: 'https://www.youtube.com/'},

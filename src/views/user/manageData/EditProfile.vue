@@ -20,17 +20,18 @@
             </v-card-title>
             <v-card-text>
                 <v-form
-                v-model="valid" 
-                lazy-validation 
-                ref="form">
+                    ref="form"
+                >
                     <v-text-field
                     outlined
                     v-model="username"
+                    :rules="usernameRules"
                     label="Name"
                     ></v-text-field>
                     <v-textarea
                     outlined
                     v-model="bio"
+                    :rules="bioRules"
                     name="input-7-1"
                     label="Bio"
                     ></v-textarea>
@@ -76,7 +77,13 @@ export default {
     data() {
         return {
             username: localStorage.getItem('username'),
+            usernameRules: [
+                v => (v && v.length >= 5) || 'Username must be more than 5 characters'
+            ],
             bio: localStorage.getItem('bio'),
+            bioRules: [
+                v => (v && v.length >= 20) || 'Bio must be more than 20 characters'
+            ],
             oldImage: localStorage.getItem('oldImage'),
             file: null,
             dialog: false,
@@ -89,45 +96,47 @@ export default {
     },
     methods: {
         async updateProfile(){
-            try {
-                this.isLoading = true
-                let data = {
-                    username: this.username,
-                    bio: this.bio,
-                }
-                if (this.file) {
-                    const userId = auth.currentUser.uid
-                    const getUser = await usersCollection.doc(userId).get()
-                    const fileRefOld = getUser.data().avatar
-                    if (fileRefOld === ''){
-                        //upload new image
-                        const fileRef = 'uploads/avatars/' + this.file.name
-                        await storage.ref(fileRef).put(this.file)
-                        data.avatar = fileRef
-                    }else{
-                        // delete old image
-                        const fileRefOld = getUser.data().avatar
-                        await storage.ref(fileRefOld).delete()
-
-                        //upload new image
-                        const fileRef = 'uploads/avatars/' + this.file.name
-                        await storage.ref(fileRef).put(this.file)
-                        data.avatar = fileRef
+            if (this.$refs.form.validate()){
+                try {
+                    this.isLoading = true
+                    let data = {
+                        username: this.username,
+                        bio: this.bio,
                     }
+                    if (this.file) {
+                        const userId = auth.currentUser.uid
+                        const getUser = await usersCollection.doc(userId).get()
+                        const fileRefOld = getUser.data().avatar
+                        if (fileRefOld === ''){
+                            //upload new image
+                            const fileRef = 'uploads/avatars/' + this.file.name
+                            await storage.ref(fileRef).put(this.file)
+                            data.avatar = fileRef
+                        }else{
+                            // delete old image
+                            const fileRefOld = getUser.data().avatar
+                            await storage.ref(fileRefOld).delete()
 
-                } else {
-                    let img = ''
-                    img = await usersCollection.doc(auth.currentUser.uid).get()
-                    data.avatar = img.data().avatar
-                }
-                store.dispatch('updateProfile', data)
-                await usersCollection.doc(auth.currentUser.uid).update(data)
-                this.isLoading = false
-                this.dialog = false
-                alert('Profile Updated')
-            }catch(error){
-                console.log(error);
-            }  
+                            //upload new image
+                            const fileRef = 'uploads/avatars/' + this.file.name
+                            await storage.ref(fileRef).put(this.file)
+                            data.avatar = fileRef
+                        }
+
+                    } else {
+                        let img = ''
+                        img = await usersCollection.doc(auth.currentUser.uid).get()
+                        data.avatar = img.data().avatar
+                    }
+                    store.dispatch('updateProfile', data)
+                    await usersCollection.doc(auth.currentUser.uid).update(data)
+                    this.isLoading = false
+                    this.dialog = false
+                    alert('Profile Updated')
+                }catch(error){
+                    console.log(error);
+                } 
+            }
         },
     }, 
 }

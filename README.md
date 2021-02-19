@@ -1,4 +1,4 @@
-# MyGram
+# my-gram
 
 ## Project setup
 ```
