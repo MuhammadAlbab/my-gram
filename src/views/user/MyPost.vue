@@ -46,8 +46,8 @@
                         <p class="subtittle-1">{{item.price}}</p>
                     </v-card-text>
                     <v-card-actions class="justify-end">
-                        <EditItem :item="item" :index="index"/>
-                        <DeleteItem :item="item" :index="index"/>
+                        <EditPost :item="item" :index="index"/>
+                        <DeletePost :item="item" :index="index"/>
                     </v-card-actions>
                 </v-card>
             </v-card>
@@ -59,14 +59,14 @@
 <script>
 import { mapState, mapActions} from 'vuex'
 import moment from 'moment'
-import EditItem from '../user/manageData/EditItem'
-import DeleteItem from '../user/manageData/DeleteItem'
+import EditPost from '../user/manageData/EditPost'
+import DeletePost from '../user/manageData/DeletePost'
 
 export default {
     name: 'tesmypost',
     components: {
-        EditItem,
-        DeleteItem,
+        EditPost,
+        DeletePost,
     },
     data(){
         return{
