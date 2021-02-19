@@ -4,7 +4,7 @@
     class="text-center">
         <v-col
         cols="12">
-            <h1>Latest Arts for you!</h1>
+            <h1>Explore Page</h1>
         </v-col>
         <v-col
         cols="12">
@@ -15,7 +15,7 @@
             ></v-progress-circular>
         </v-col>
     </v-row>
-    <div>
+    <template>
         <v-card
         class="d-flex flex-wrap justify-space-around"
         flat
@@ -28,7 +28,7 @@
                 height="400"
                 width="400"
                 :src="item.image"
-                class="white--text align-start"
+                class="white--text align-end"
                 lazy-src="https://via.placeholder.com/400">
                 <v-card-title>
                     {{item.name | trimLengthName}}
@@ -62,7 +62,6 @@
                         <v-card-text>
                             <p class="display-1 text--primary">{{item.name}}</p>
                             <p>{{item.description | trimLengthDesc}}</p>
-                            <p>Rp.{{item.price}}</p>
                             <p>Posted by: {{item.author}}</p>
                             <p><a :href="item.image" target="_blank">Full Size Image</a></p>
                         </v-card-text>
@@ -79,7 +78,7 @@
                 </v-expand-transition>
             </v-card>
         </v-card>
-    </div>
+    </template>
     </v-container>
 </template>
 

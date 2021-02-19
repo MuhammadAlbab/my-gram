@@ -4,7 +4,7 @@
     class="text-center">
         <v-col
         cols="12">
-            <h1>Your Favorite ones!</h1>
+            <h1>Favorites Page</h1>
         </v-col>
         <v-col
         cols="12">
@@ -28,7 +28,7 @@
                 height="400"
                 width="400"
                 :src="item.image"
-                class="white--text align-start"
+                class="white--text align-end"
                 lazy-src="https://via.placeholder.com/400">
                 <v-card-title>
                     {{item.name | trimLengthName}}
@@ -54,13 +54,6 @@
                     :disabled="isDisabled">
                         <v-icon>mdi-heart</v-icon>
                     </v-btn>
-                    <v-btn
-                    icon
-                    @click="cartButton(item.id, index)"
-                    :color="(item.cartedItems.itemId == item.id) ? 'green' : ''"
-                    :disabled="isDisabled">
-                        <v-icon>mdi-cart</v-icon>
-                    </v-btn>
                 </v-card-actions>
                 <v-expand-transition>
                     <v-card
@@ -69,7 +62,6 @@
                         <v-card-text>
                             <p class="display-1 text--primary">{{item.name}}</p>
                             <p>{{item.description | trimLengthDesc}}</p>
-                            <p>Rp.{{item.price}}</p>
                             <p>Posted by: {{item.author}}</p>
                             <p><a :href="item.image" target="_blank">Full Size Image</a></p>
                         </v-card-text>
@@ -110,12 +102,6 @@ export default {
         async likeButton(id, likesCount, index){
             this.isDisabled = true
             await this.likeItem({id,likesCount,index})
-            this.isDisabled = false
-        },
-
-        async cartButton(id, index){
-            this.isDisabled = true
-            await this.addToCart({id, index})
             this.isDisabled = false
         },
     },

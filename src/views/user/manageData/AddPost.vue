@@ -5,15 +5,19 @@
     width="600px">
     <template v-slot:activator="{on}">
         <v-btn
-        dark
-        v-on="on"
-        color="orange">
-        Add New Item
+            class="mr-0"
+            color="orange"
+            min-width="100"
+            
+            v-on="on"
+            dark
+        >
+            Add New Post
         </v-btn>
     </template>
         <v-card>
             <v-card-title>
-                Add New Item
+                Add New Post
             </v-card-title>
             <v-card-text>
                 <v-form
@@ -31,11 +35,6 @@
                     name="input-7-1"
                     label="Description"
                     ></v-textarea>
-                    <v-text-field
-                    outlined
-                    v-model="price"
-                    label="Price"
-                    ></v-text-field>
                     <v-file-input
                     prepend-icon="mdi-camera"
                     accept="image/*"
@@ -74,7 +73,6 @@ export default {
         return {
             name: '',
             description: '',
-            price: '',
             file: null,
             isLoading: false,
             valid: false,
@@ -95,7 +93,6 @@ export default {
                     userId: auth.currentUser.uid,
                     name: this.name,
                     description: this.description,
-                    price: this.price,
                     createdOn: new Date(),
                     likes: 0,
                     image: fileRef

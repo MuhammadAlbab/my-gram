@@ -10,34 +10,32 @@ const routes = [
     path: '/',
     name: 'Home',
     component: Home,
-    meta: {home: true}
+    meta: {home: true},
   },
   {
-    path: '/dashboard',
-    name: 'Dashboard',
+    path: '/dashboard/',
     meta: {auth: true},
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "login" */ '../views/user/Dashboard.vue')
-  },
-  {
-    path: '/latestarts',
-    name: 'LatestArts',
-    meta: {auth: true},
-    component: () => import(/* webpackChunkName: "login" */ '../views/user/LatestArt.vue')
-  },
-  {
-    path: '/yourfav',
-    name: 'YourFav',
-    meta: {auth: true},
-    component: () => import(/* webpackChunkName: "login" */ '../views/user/YourFav.vue')
-  },
-  {
-    path: '/cart',
-    name: 'Cart',
-    meta: {auth: true},
-    component: () => import(/* webpackChunkName: "login" */ '../views/user/Cart.vue')
+    component: () => import(/* webpackChunkName: "login" */ '../views/user/Dashboard.vue'),
+    children : [
+      {
+        path: '/',
+        name: 'Dashboard',
+        component: () => import(/* webpackChunkName: "login" */ '../views/user/MyPost.vue')
+      },
+      {
+        path: 'favorites',
+        name: 'Favorites',
+        component: () => import(/* webpackChunkName: "login" */ '../views/user/Favorites.vue')
+      },
+      {
+        path: 'explore',
+        name: 'Explore',
+        component: () => import(/* webpackChunkName: "login" */ '../views/user/Explore.vue')
+      },
+    ]
   },
 ]
 

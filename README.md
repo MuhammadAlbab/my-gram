@@ -1,4 +1,4 @@
-# sell-art
+# MyGram
 
 ## Project setup
 ```

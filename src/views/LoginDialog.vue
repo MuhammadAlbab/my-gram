@@ -1,5 +1,10 @@
 <template>
     <v-card>
+        <v-container class="text-center orange lighten-2">
+            <div class="headline">Demo Account:</div>
+            <div class="body-1">E-mail: user1@user.com</div>
+            <div class="body-1">Password: user1234</div>
+        </v-container>
         <v-form
         ref="form"
         >
@@ -10,7 +15,7 @@
                 transition="slide-y-transition">
                 Maaf anda belum terdaftar, lakukan register terlebih dahulu! atau pastikan data yang anda masukan benar!
             </v-alert>
-            <v-card-text>
+            <v-card-text class="pb-0">
             <v-text-field
             v-model="email"
             label="E-mail"
@@ -25,7 +30,7 @@
             @click:append="clickPassword"
             ></v-text-field>
             </v-card-text>
-            <v-card-actions class="justify-center">
+            <v-card-actions class="justify-center pt-0">
                 <v-btn
                 text dark class="orange lighten-2"
                 @click="clickLogin"

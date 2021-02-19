@@ -16,6 +16,12 @@
             label="Name"
             outlined
             ></v-text-field>
+            <v-textarea
+            v-model="bio"
+            label="Bio"
+            placeholder="Tell us a little bit about your self"
+            outlined
+            ></v-textarea>
             <v-text-field
             v-model="email"
             label="E-mail"
@@ -31,7 +37,7 @@
             @click:append="clickPassword"
             ></v-text-field>
             </v-card-text>
-            <v-card-actions class="justify-center">
+            <v-card-actions class="justify-center pt-0">
                 <v-btn
                 text dark class="orange lighten-2"
                 @click="clickRegister"
@@ -49,6 +55,7 @@ export default {
     data(){
         return {
             username: '',
+            bio: '',
             email: '',
             password: '',
             showPassword: false,
@@ -70,10 +77,10 @@ export default {
                 this.isLoading = true
                 await this.$store.dispatch('register', {
                     username: this.username,
+                    bio: this.bio,
                     email: this.email,
                     password: this.password,
                 })
-                this.$store.state.welcomeNotif = true
             }
         },
         clickPassword(){

@@ -5,15 +5,18 @@
     width="600px">
         <template v-slot:activator="{on}">
             <v-btn
-            text
+            class="mr-0"
+            color="orange"
+            min-width="100"
             v-on="on"
-            color="orange">
-            Edit
-            </v-btn>
+            dark
+        >
+            Edit Profile
+        </v-btn>
         </template>
         <v-card>
             <v-card-title>
-                Edit Item
+                Edit Your Profile
             </v-card-title>
             <v-card-text>
                 <v-form
@@ -22,19 +25,19 @@
                 ref="form">
                     <v-text-field
                     outlined
-                    v-model="name"
+                    v-model="username"
                     label="Name"
                     ></v-text-field>
                     <v-textarea
                     outlined
-                    v-model="description"
+                    v-model="bio"
                     name="input-7-1"
-                    label="Description"
+                    label="Bio"
                     ></v-textarea>
                     <v-file-input
                     prepend-icon="mdi-camera"
                     accept="image/*"
-                    label="Select Image"
+                    label="Change Profile Picture"
                     v-model="file"
                     show-size
                     ></v-file-input>
@@ -44,7 +47,7 @@
                         dark
                         elevation="2"
                         color="orange"
-                        @click="updateItem"
+                        @click="updateProfile"
                         :loading="isLoading">
                         Update
                         </v-btn>
@@ -62,72 +65,71 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
-import {auth, storage, itemsCollection} from '../../../firebase'
+import store from '@/store'
+import { mapState } from 'vuex'
+import {auth, storage, usersCollection} from '@/firebase'
 export default {
-    name: 'EditItem',
+    name: 'EditProfile',
     components: {
 
     },
-    props: ['item', 'index'],
     data() {
         return {
-            name: '',
-            description: '',
-            price: '',
+            username: localStorage.getItem('username'),
+            bio: localStorage.getItem('bio'),
+            oldImage: localStorage.getItem('oldImage'),
             file: null,
-            oldImage: '',
             dialog: false,
             valid: false,
             isLoading: false,
         }
     },
     computed: {
-        ...mapActions(['getItemsByUser'])
+        ...mapState(['userProfile']),
     },
     methods: {
-        async updateItem(){
+        async updateProfile(){
             try {
                 this.isLoading = true
                 let data = {
-                    userId: auth.currentUser.uid,
-                    name: this.name,
-                    description: this.description,
-                    price: this.price,
+                    username: this.username,
+                    bio: this.bio,
                 }
-
                 if (this.file) {
-                    // delete old image
-                    const fileRefOld = this.item.img
-                    await storage.ref(fileRefOld).delete()
+                    const userId = auth.currentUser.uid
+                    const getUser = await usersCollection.doc(userId).get()
+                    const fileRefOld = getUser.data().avatar
+                    if (fileRefOld === ''){
+                        //upload new image
+                        const fileRef = 'uploads/avatars/' + this.file.name
+                        await storage.ref(fileRef).put(this.file)
+                        data.avatar = fileRef
+                    }else{
+                        // delete old image
+                        const fileRefOld = getUser.data().avatar
+                        await storage.ref(fileRefOld).delete()
 
-                    //upload new image
-                    const fileRef = 'uploads/items/' + this.file.name
-                    await storage.ref(fileRef).put(this.file)
-                    data.image = fileRef
+                        //upload new image
+                        const fileRef = 'uploads/avatars/' + this.file.name
+                        await storage.ref(fileRef).put(this.file)
+                        data.avatar = fileRef
+                    }
+
                 } else {
-                    data.image = this.item.img
+                    let img = ''
+                    img = await usersCollection.doc(auth.currentUser.uid).get()
+                    data.avatar = img.data().avatar
                 }
-                await itemsCollection.doc(this.item.id).update(data)
+                store.dispatch('updateProfile', data)
+                await usersCollection.doc(auth.currentUser.uid).update(data)
                 this.isLoading = false
                 this.dialog = false
-                await this.getItemsByUser
-                alert('item updated')
+                alert('Profile Updated')
             }catch(error){
                 console.log(error);
             }  
         },
-        setData(){
-            if(this.item){
-                this.name = this.item.name
-                this.description = this.item.description
-                this.oldImage = this.item.image
-            }
-        },
-    },
-    mounted(){
-        this.setData()
-    }
+    }, 
 }
 </script>
 
