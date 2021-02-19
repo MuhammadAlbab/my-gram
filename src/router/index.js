@@ -23,7 +23,7 @@ const routes = [
       {
         path: '/',
         name: 'Dashboard',
-        component: () => import(/* webpackChunkName: "login" */ '../views/user/MyPost.vue')
+        component: () => import(/* webpackChunkName: "login" */ '../views/user/Explore.vue')
       },
       {
         path: 'favorites',
@@ -31,9 +31,9 @@ const routes = [
         component: () => import(/* webpackChunkName: "login" */ '../views/user/Favorites.vue')
       },
       {
-        path: 'explore',
-        name: 'Explore',
-        component: () => import(/* webpackChunkName: "login" */ '../views/user/Explore.vue')
+        path: 'mypost',
+        name: 'MyPost',
+        component: () => import(/* webpackChunkName: "login" */ '../views/user/MyPost.vue')
       },
     ]
   },

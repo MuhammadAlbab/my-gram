@@ -1,83 +1,113 @@
 <template>
-  <v-container>
-    <v-row
-    class="text-center">
-        <v-col
-        cols="12">
-            <h1>Explore Page</h1>
-        </v-col>
-        <v-col
-        cols="12">
-            <v-progress-circular v-if="allItems.length == 0"
-            :size="50"
-            color="orange"
-            indeterminate
-            ></v-progress-circular>
-        </v-col>
-    </v-row>
-    <template>
-        <v-card
-        class="d-flex flex-wrap justify-space-around"
-        flat
-        tile>
-            <v-card v-for="(item, index) in allItems" :key="item.id"
-            class="ma-2"
+  <v-container class="fill-height">
+    <template v-if="allItems.length == 0">
+        <v-row align="center" justify="center">
+            <v-progress-circular
+                :size="50"
+                color="orange"
+                indeterminate
             >
-                <v-img 
-                v-if="item.image"
-                height="400"
-                width="400"
-                :src="item.image"
-                class="white--text align-end"
-                lazy-src="https://via.placeholder.com/400">
-                <v-card-title>
-                    {{item.name | trimLengthName}}
-                </v-card-title>
-                <v-card-subtitle class="white--text">
-                    {{item.createdOn | formatDate}}
-                </v-card-subtitle>
-                </v-img>
-                <v-card-actions>
-                    <v-btn 
-                    text
-                    @click="moreDetails = index">
-                        More details
-                    </v-btn>
-                    <v-spacer> </v-spacer>
-                    <v-list-item-action-text>
-                        {{item.likes}}
-                    </v-list-item-action-text>
-                    <v-btn
-                    icon
-                    @click="likeButton(item.id, item.likes, index)"
-                    :color="(item.likedItems.itemId == item.id) ? 'orange' : ''"
-                    :disabled="isDisabled">
-                        <v-icon>mdi-heart</v-icon>
-                    </v-btn>
-                </v-card-actions>
-                <v-expand-transition>
-                    <v-card
-                    v-show="moreDetails == index"
-                    class="transition-fast-in-fast-out v-card--moreDetails">
-                        <v-card-text>
-                            <p class="display-1 text--primary">{{item.name}}</p>
-                            <p>{{item.description | trimLengthDesc}}</p>
-                            <p>Posted by: {{item.author}}</p>
-                            <p><a :href="item.image" target="_blank">Full Size Image</a></p>
-                        </v-card-text>
-                        <v-card-actions class="justify-end">
-                            <v-btn
-                            text
-                            dark
-                            color="red"
-                            @click="moreDetails = -1">
-                            Close
-                            </v-btn>
+            </v-progress-circular>
+        </v-row>
+    </template>
+    <template v-else> 
+        <v-row
+            align="center"
+            justify="center"
+        >
+            <v-col
+            cols="12"
+            class="text-center">
+                <h1>Explore Page</h1>
+            </v-col>
+            <v-col>
+                <v-card
+                    class="d-flex flex-wrap justify-space-around"
+                    flat
+                    tile
+                >
+                    <v-card v-for="(item, index) in allItems" :key="item.id"
+                    class="ma-2"
+                    >
+                        <v-img 
+                        v-if="item.image"
+                        height="400"
+                        width="400"
+                        :src="item.image"
+                        class="white--text align-start"
+                        lazy-src="https://via.placeholder.com/400">
+                            <v-card-title>
+                                {{item.name | trimLengthName}}
+                            </v-card-title>
+                            <v-card-subtitle class="white--text">
+                                {{item.createdOn | formatDate}}
+                            </v-card-subtitle>
+                        </v-img>
+                        <v-card-actions class="pl-0">
+                            <v-list-item class="grow">
+                                <v-list-item-avatar color="grey darken-3">
+                                    <v-img
+                                    class="elevation-6"
+                                    alt="Avatar"
+                                    :src="item.avatar"
+                                    ></v-img>
+                                </v-list-item-avatar>
+
+                                <v-list-item-content>
+                                    <v-list-item-title>
+                                        {{item.author}}
+                                    </v-list-item-title>
+                                </v-list-item-content>
+
+                                <v-row
+                                    align="center"
+                                    justify="end"
+                                >
+                                    <v-btn 
+                                        icon
+                                        @click="moreDetails = index"
+                                    >
+                                        ...
+                                    </v-btn>
+                                    <v-btn
+                                        icon
+                                        @click="likeButton(item.id, item.likes, index)"
+                                        :color="(item.likedItems.itemId == item.id) ? 'orange' : ''"
+                                        :disabled="isDisabled"
+                                    >
+                                        <v-icon>mdi-heart</v-icon>
+                                        <v-list-item-action-text>
+                                            {{item.likes}}
+                                        </v-list-item-action-text>
+                                    </v-btn>
+                                </v-row>
+                            </v-list-item>
                         </v-card-actions>
+                        <v-expand-transition>
+                            <v-card
+                            v-show="moreDetails == index"
+                            class="transition-fast-in-fast-out v-card--moreDetails">
+                                <v-card-text class="mb-0 pb-0">
+                                    <p class="display-1 text--primary mb-0 pt-0">{{item.name}}</p>
+                                    <p class="mb-1">{{item.description | trimLengthDesc}}</p>
+                                    <p><a :href="item.image" target="_blank">Full Size Image</a></p>
+                                    <p class="mb-0 pb-0">Posted by: {{item.author}}</p>
+                                </v-card-text>
+                                <v-card-actions class="justify-end mt-0 pt-0">
+                                    <v-btn
+                                    text
+                                    dark
+                                    color="red"
+                                    @click="moreDetails = -1">
+                                    Close
+                                    </v-btn>
+                                </v-card-actions>
+                            </v-card>
+                        </v-expand-transition>
                     </v-card>
-                </v-expand-transition>
-            </v-card>
-        </v-card>
+                </v-card>
+            </v-col>
+        </v-row>
     </template>
     </v-container>
 </template>
@@ -113,8 +143,8 @@ export default {
             return moment(date).fromNow()
         },
         trimLengthDesc(val) {
-            if (val.length < 50) { return val }
-            return `${val.substring(0, 50)}...`
+            if (val.length < 200) { return val }
+            return `${val.substring(0, 200)}...`
         },
         trimLengthName(val) {
             if (val.length < 20) { return val }
@@ -129,9 +159,6 @@ export default {
 </script>
 
 <style scoped>
-    .v-progress-circular {
-        margin: 1rem;
-    }
 
     .v-card--moreDetails {
         /* height: 100%; */

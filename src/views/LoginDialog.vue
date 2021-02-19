@@ -2,8 +2,8 @@
     <v-card>
         <v-container class="text-center orange lighten-2">
             <div class="headline">Demo Account:</div>
-            <div class="body-1">E-mail: user1@user.com</div>
-            <div class="body-1">Password: user1234</div>
+            <div class="body-1">E-mail: demo@demo.com</div>
+            <div class="body-1">Password: demo12345</div>
         </v-container>
         <v-form
         ref="form"

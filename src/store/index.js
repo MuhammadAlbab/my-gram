@@ -102,6 +102,7 @@ export default new Vuex.Store({
             img = await fb.storage.ref().child(doc.data().image).getDownloadURL()
           }
           const authorQuery = await fb.usersCollection.doc(doc.data().userId).get()
+          let myAvatar = await fb.storage.ref().child(authorQuery.data().avatar).getDownloadURL()
           const ownLikes = await fb.likesCollection.doc(auth.currentUser.uid + doc.id).get()
           let item = {
             id: doc.id,
@@ -112,6 +113,7 @@ export default new Vuex.Store({
             image: img,
             img: doc.data().image,
             author: authorQuery.data().username,
+            avatar: myAvatar,
             likedItems: {
               itemId: (ownLikes.exists) ? ownLikes.data().itemId : null,
               userId: (ownLikes.exists) ? ownLikes.data().userId : null,
@@ -163,6 +165,7 @@ export default new Vuex.Store({
             img = await fb.storage.ref().child(itemsQuery.data().image).getDownloadURL()
           }
           const authorQuery = await fb.usersCollection.doc(itemsQuery.data().userId).get()
+          let myAvatar = await fb.storage.ref().child(authorQuery.data().avatar).getDownloadURL()
           let item = {
                 id: itemsQuery.id,
                 name: itemsQuery.data().name,
@@ -172,6 +175,7 @@ export default new Vuex.Store({
                 image: img,
                 img: itemsQuery.data().image,
                 author: authorQuery.data().username,
+                avatar: myAvatar,
                 likedItems: {
                   itemId: (doc.exists) ? doc.data().itemId : null,
                   userId: (doc.exists) ? doc.data().userId : null,

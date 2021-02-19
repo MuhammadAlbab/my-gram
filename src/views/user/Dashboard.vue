@@ -29,6 +29,13 @@
                     class="mt-5" color="orange"
                     link to="/dashboard/"
                 >
+                    Explore
+                </v-btn>
+                <v-btn 
+                    block dark 
+                    class="mt-2" color="orange"
+                    link to="/dashboard/mypost"
+                >
                     My Post
                 </v-btn>
                 <v-btn 
@@ -37,13 +44,6 @@
                     link to="/dashboard/favorites"
                 >
                     My Favorites
-                </v-btn>
-                <v-btn 
-                    block dark 
-                    class="mt-2" color="orange"
-                    link to="/dashboard/explore"
-                >
-                    Explore
                 </v-btn>
             </v-col>
             <v-col
@@ -80,7 +80,7 @@ export default {
         
     },
     mounted(){
-        // console.log(this.userProfile.avatar);
+
     }
 
 }
