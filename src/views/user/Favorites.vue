@@ -1,26 +1,40 @@
 <template>
-    <v-container class="fill-height">
+    <v-container>
+        <v-row>
+            <v-col
+                cols="12"
+                class="text-center"
+            >
+                <h1>Your Favorites</h1>
+            </v-col>
+        </v-row>
         <template v-if="favItems.length == 0">
             <v-row align="center" justify="center">
-                <v-progress-circular
-                    :size="50"
-                    color="orange"
-                    indeterminate
-                ></v-progress-circular>
-                <!-- <h1>Anda belum like apa pun</h1> -->
+                <v-col
+                    class="text-center"
+                    cols="12"
+                >
+                        <v-progress-circular
+                            :size="50"
+                            color="orange"
+                            indeterminate
+                        >
+                        </v-progress-circular>
+                </v-col>
+                <v-col
+                    class="text-center"
+                    cols="12"
+                >
+                    <h2>If the loading takes too long, that means you have not liked anything yet!</h2>
+                    <h3>Like one now</h3>
+                </v-col>
             </v-row>
         </template>
-
         <template v-else>
             <v-row 
                 align="center" 
                 justify="center"
             >
-                <v-col
-                cols="12"
-                class="text-center">
-                    <h1>Your Favorites</h1>
-                </v-col>
                 <v-col>
                     <v-card
                         class="d-flex flex-wrap justify-space-around"
@@ -47,11 +61,20 @@
                             <v-card-actions class="pl-0">
                                 <v-list-item class="grow">
                                     <v-list-item-avatar color="grey darken-3">
+                                        <template v-if="item.avatar !== ''">
                                         <v-img
                                         class="elevation-6"
                                         alt="Avatar"
                                         :src="item.avatar"
                                         ></v-img>
+                                        </template>
+                                        <template v-else>
+                                            <v-img
+                                            class="elevation-6"
+                                            alt="Avatar"
+                                            :src="defaultAvi"
+                                            ></v-img>
+                                        </template>
                                     </v-list-item-avatar>
 
                                     <v-list-item-content>
@@ -115,7 +138,6 @@
 </template>
 
 <script>
-// import {auth} from'../../firebase'
 import { mapState, mapActions } from 'vuex'
 import moment from 'moment'
 export default {
@@ -124,13 +146,14 @@ export default {
         return{
             moreDetails: -1,
             isDisabled: false,
+            defaultAvi: require('@/assets/dummy-avatar.jpg'),
         }
     },
     computed: {
         ...mapState(['favItems']),
     },
     methods: {
-        ...mapActions(['getFavItems','likeItem', 'addToCart']),
+        ...mapActions(['getFavItems','likeItem']),
         async likeButton(id, likesCount, index){
             this.isDisabled = true
             await this.likeItem({id,likesCount,index})

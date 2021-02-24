@@ -1,70 +1,88 @@
 <template>
-  <v-container class="fill-height">
-    <template v-if="itemsByUser.length == 0">
-        <v-row align="center" justify="center">
-            <v-col
-            cols="12">
-                <h1 class="text-center">You have not post anything!</h1>
-            </v-col>
-            <v-col
-            cols="12">
-                <h2 class="text-center">Add one now</h2>
-            </v-col>
-        </v-row>
-    </template>
-    <template v-else>
-        <v-row
-            align="center"
-            justify="center"
-        >
-            <v-col
+    <v-container>
+        <v-row>
+           <v-col
                 cols="12"
                 class="text-center"
             >
                 <h1>Your Post</h1>
-            </v-col>
-            <v-col>
-                <v-card
-                    class="d-flex flex-wrap justify-space-around"
-                    flat
-                    tile
+            </v-col> 
+        </v-row>
+        <template v-if="itemsByUser.length == 0">
+            <v-row align="center" justify="center">
+                <v-col
+                    class="text-center"
+                    cols="12"
                 >
+                        <v-progress-circular
+                            :size="50"
+                            color="orange"
+                            indeterminate
+                        >
+                        </v-progress-circular>
+                </v-col>
+                <v-col
+                    class="text-center"
+                    cols="12"
+                >
+                    <h2>If the loading takes too long, that means you have not posted anything yet!</h2>
+                    <h3>Add one now</h3>
+                </v-col>
+            </v-row>
+        </template>
+        <template v-else>
+            <v-row
+                align="center"
+                justify="center"
+            >
+                <v-col
+                    cols="12"
+                    class="text-center"
+                >
+                    <h1>Your Post</h1>
+                </v-col>
+                <v-col>
                     <v-card
-                        v-for="(item, index) in itemsByUser" :key="item.id"
-                        class="ma-2"
+                        class="d-flex flex-wrap justify-space-around"
+                        flat
+                        tile
                     >
-                        <v-img 
-                        v-if="item.image"
-                        height="400"
-                        width="400"
-                        class="white--text align-start"
-                        :src="item.image"
-                        lazy-src="https://via.placeholder.com/400">
-                            <v-card-title>
-                                {{item.name | trimLengthName}}
-                            </v-card-title>
-                            <v-card-subtitle class="white--text">
-                                {{item.createdOn | formatDate}}
-                            </v-card-subtitle>
-                            <v-card-text>
-                                <v-icon dark>mdi-heart</v-icon>
-                                {{item.likes}}
+                        <v-card
+                            v-for="(item, index) in itemsByUser" :key="item.id"
+                            class="ma-2"
+                        >
+                            <v-img 
+                            v-if="item.image"
+                            height="400"
+                            width="400"
+                            class="white--text align-start"
+                            :src="item.image"
+                            lazy-src="https://via.placeholder.com/400">
+                                <v-card-title>
+                                    {{item.name | trimLengthName}}
+                                </v-card-title>
+                                <v-card-subtitle class="white--text">
+                                    {{item.createdOn | formatDate}}
+                                </v-card-subtitle>
+                                <v-card-text>
+                                    <v-icon dark>mdi-heart</v-icon>
+                                    {{item.likes}}
+                                </v-card-text>
+                            </v-img>
+                            <v-card-text class="pb-0">
+                                <p class="subtittle-1">{{item.description | trimLengthDesc}}</p>
+                                <p class="subtittle-1">{{item.price}}</p>
                             </v-card-text>
-                        </v-img>
-                        <v-card-text class="pb-0">
-                            <p class="subtittle-1">{{item.description | trimLengthDesc}}</p>
-                            <p class="subtittle-1">{{item.price}}</p>
-                        </v-card-text>
-                        <v-card-actions class="justify-end">
-                            <EditPost :item="item" :index="index"/>
-                            <DeletePost :item="item" :index="index"/>
-                        </v-card-actions>
+                            <v-card-actions class="justify-end">
+                                <EditPost :item="item" :index="index"/>
+                                <DeletePost :item="item" :index="index"/>
+                            </v-card-actions>
+                        </v-card>
                     </v-card>
-                </v-card>
-            </v-col>
-        </v-row>  
-    </template>
-</v-container>
+                </v-col>
+            </v-row>  
+        </template>
+    </v-container>
 </template>
 
 <script>

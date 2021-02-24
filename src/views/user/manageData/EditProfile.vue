@@ -38,11 +38,29 @@
                     <v-file-input
                     prepend-icon="mdi-camera"
                     accept="image/*"
-                    label="Change Profile Picture"
+                    label="New Avatar"
                     v-model="file"
                     show-size
                     ></v-file-input>
-                    <p>Current Image: <a v-if="oldImage" :href="oldImage" target="_blank">Here</a></p>
+                    <p class="mb-0">Current Avatar: 
+                        <template v-if="oldImage">
+                            <a :href="oldImage" target="_blank">Here</a>
+                        </template>
+                        <template v-else>
+                            <span>None</span>
+                        </template>
+                    </p>
+                    <v-btn
+                        v-if="oldImage !== ''"
+                        @click="deleteAvatar"
+                        text
+                        x-small  
+                        left
+                        class="pl-0"
+                        color="red"
+                    >
+                        Delete Avatar
+                    </v-btn>
                     <v-card-actions class="justify-center">
                         <v-btn
                         dark
@@ -76,15 +94,15 @@ export default {
     },
     data() {
         return {
-            username: localStorage.getItem('username'),
+            username: '',
+            bio: '',
+            oldImage: '',
             usernameRules: [
                 v => (v && v.length >= 5) || 'Username must be more than 5 characters'
             ],
-            bio: localStorage.getItem('bio'),
             bioRules: [
                 v => (v && v.length >= 20) || 'Bio must be more than 20 characters'
             ],
-            oldImage: localStorage.getItem('oldImage'),
             file: null,
             dialog: false,
             valid: false,
@@ -116,14 +134,13 @@ export default {
                             // delete old image
                             const fileRefOld = getUser.data().avatar
                             await storage.ref(fileRefOld).delete()
-
                             //upload new image
                             const fileRef = 'uploads/avatars/' + this.file.name
                             await storage.ref(fileRef).put(this.file)
                             data.avatar = fileRef
                         }
 
-                    } else {
+                    }else{
                         let img = ''
                         img = await usersCollection.doc(auth.currentUser.uid).get()
                         data.avatar = img.data().avatar
@@ -138,7 +155,34 @@ export default {
                 } 
             }
         },
+        async deleteAvatar(){
+            const userId = auth.currentUser.uid
+            const getUser = await usersCollection.doc(userId).get()
+            const fileRefOld = getUser.data().avatar
+            await storage.ref(fileRefOld).delete()
+            let data = {
+                username: this.username,
+                bio: this.bio,
+                avatar: ''
+            }
+            store.dispatch('updateProfile', data)
+            await usersCollection.doc(auth.currentUser.uid).update(data)
+            this.dialog = false
+            alert('Profile Updated')
+        },
+        setData(){
+            this.username = this.userProfile.username
+            this.bio = this.userProfile.bio
+            this.oldImage = this.userProfile.avatar
+        }
     }, 
+    watch: {
+        dialog(val){
+            if (val == true){
+                this.setData()
+            }
+        }
+    }
 }
 </script>
 

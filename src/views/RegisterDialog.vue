@@ -1,5 +1,11 @@
 <template>
     <v-card>
+        <v-container class="text-center orange lighten-2">
+            <div class="body-1">Or use the demo account instead</div>
+            <div class="headline">Demo Account:</div>
+            <div class="body-1">E-mail: demo@demo.com</div>
+            <div class="body-1">Password: demo12345</div>
+        </v-container>
         <v-form
         ref="form"
         >
@@ -14,11 +20,13 @@
             <v-text-field
             v-model="username"
             label="Name"
+            :rules="usernameRules"
             outlined
             ></v-text-field>
             <v-textarea
             v-model="bio"
             label="Bio"
+            :rules="bioRules"
             placeholder="Tell us a little bit about your self"
             outlined
             ></v-textarea>
@@ -60,6 +68,12 @@ export default {
             password: '',
             showPassword: false,
             registerAlert: false,
+            usernameRules: [
+                v => (v && v.length >= 5) || 'Username must be atleast 5 or more characters'
+            ],
+            bioRules: [
+                v => (v && v.length >= 20) || 'Bio must be atleast 20 or more characters'
+            ],
             emailRules: [
                 v => !!v || 'E-mail is required',
                 v => /.+@.+\..+/.test(v) || 'E-mail must be valid',

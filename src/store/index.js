@@ -38,29 +38,31 @@ export default new Vuex.Store({
   actions: {
     //Manage login,register,logout,auth, update profile
     async getUserProfile({commit}, payload){
-      const userProfile  = await fb.usersCollection.doc(payload.uid).get()
-      let data = {}
-      if (userProfile.data().avatar === ''){
-        data = {
-          avatar: userProfile.data().avatar,
-          username: userProfile.data().username,
-          bio: userProfile.data().bio,
+      try {
+        const userProfile  = await fb.usersCollection.doc(payload.uid).get()
+        let data = {}
+        if (userProfile.data().avatar === ''){
+          data = {
+            avatar: '',
+            username: userProfile.data().username,
+            bio: userProfile.data().bio,
+          }
+        }else{
+          let img = await fb.storage.ref().child(userProfile.data().avatar).getDownloadURL()
+          data = {
+            avatar: img,
+            username: userProfile.data().username,
+            bio: userProfile.data().bio,
+          }
         }
-      }else{
-        let img = await fb.storage.ref().child(userProfile.data().avatar).getDownloadURL()
-        data = {
-          avatar: img,
-          username: userProfile.data().username,
-          bio: userProfile.data().bio,
+        commit('setUserProfile', data)
+        if (router.currentRoute.path === '/'){
+          router.push('/dashboard/').catch(console.log('Ignore this, Navigation error stuff'))
         }
+      }catch(error){
+        console.log(error);
       }
-      commit('setUserProfile', data)
-      localStorage.setItem('username', data.username)
-      localStorage.setItem('bio', data.bio)
-      localStorage.setItem('oldImage', data.avatar)
-      if (router.currentRoute.path === '/'){
-        router.push('/dashboard').catch(console.log('Ignore this, only navigation error stuff'))
-      }
+      
     },
     async register({dispatch}, payload){
       const { user } = await fb.auth.createUserWithEmailAndPassword(payload.email, payload.password)
@@ -77,17 +79,16 @@ export default new Vuex.Store({
     },
     async logout({commit}){
       await fb.auth.signOut()
-      localStorage.removeItem('username')
-      localStorage.removeItem('bio'),
-      localStorage.removeItem('oldImage'),
       commit('setUserProfile', {})
       router.push('/')
     },
 
     async updateProfile({commit}, payload){
-      let img = await fb.storage.ref().child(payload.avatar).getDownloadURL()
-      payload.avatar = img
-      commit('updatedProfile', payload )
+      if (payload.avatar !== ''){
+        let img = await fb.storage.ref().child(payload.avatar).getDownloadURL()
+        payload.avatar = img
+      }
+      commit('updatedProfile', payload)
       
     },
     //Manage data
@@ -98,11 +99,14 @@ export default new Vuex.Store({
         const myItems = []
         querySnapshot.forEach( async (doc) => {
           let img = ''
+          let myAvatar = ''
           if (doc.data().image){
             img = await fb.storage.ref().child(doc.data().image).getDownloadURL()
           }
           const authorQuery = await fb.usersCollection.doc(doc.data().userId).get()
-          let myAvatar = await fb.storage.ref().child(authorQuery.data().avatar).getDownloadURL()
+          if (authorQuery.data().avatar !== '') {
+            myAvatar = await fb.storage.ref().child(authorQuery.data().avatar).getDownloadURL()
+          }
           const ownLikes = await fb.likesCollection.doc(auth.currentUser.uid + doc.id).get()
           let item = {
             id: doc.id,
@@ -158,6 +162,7 @@ export default new Vuex.Store({
         //get data once
         const likesQuery = await fb.likesCollection.where('userId', '==', fb.auth.currentUser.uid).get()
         const myItems = []
+        let myAvatar = ''
         likesQuery.forEach (async (doc)  => {
           const itemsQuery = await fb.itemsCollection.doc(doc.data().itemId).get()
           let img = ''
@@ -165,7 +170,9 @@ export default new Vuex.Store({
             img = await fb.storage.ref().child(itemsQuery.data().image).getDownloadURL()
           }
           const authorQuery = await fb.usersCollection.doc(itemsQuery.data().userId).get()
-          let myAvatar = await fb.storage.ref().child(authorQuery.data().avatar).getDownloadURL()
+          if (authorQuery.data().avatar !== '') {
+            myAvatar = await fb.storage.ref().child(authorQuery.data().avatar).getDownloadURL()
+          }
           let item = {
                 id: itemsQuery.id,
                 name: itemsQuery.data().name,

@@ -4,8 +4,10 @@
             <v-col
             cols="12"
             md="3">
-                <v-card class="mt-4 text-center">
-                    
+                <v-card 
+                    class="mt-4 text-center"
+                    flat
+                >    
                     <v-img
                         class="rounded-circle elevation-6 mt-n5 d-inline-block"
                         :src="(userProfile.avatar === '' ? defaultAvi : userProfile.avatar )" 
@@ -27,21 +29,21 @@
                 <v-btn 
                     block dark 
                     class="mt-5" color="orange"
-                    link to="/dashboard/"
+                    link to="/"
                 >
                     Explore
                 </v-btn>
                 <v-btn 
                     block dark 
                     class="mt-2" color="orange"
-                    link to="/dashboard/mypost"
+                    link to="/mypost"
                 >
                     My Post
                 </v-btn>
                 <v-btn 
                     block dark 
                     class="mt-2" color="orange"
-                    link to="/dashboard/favorites"
+                    link to="/favorites"
                 >
                     My Favorites
                 </v-btn>
@@ -50,7 +52,12 @@
                 cols="12"
                 md="9"
             >
-                <router-view> </router-view>
+                <v-card
+                    class="mt-4"
+                    flat
+                >
+                    <router-view> </router-view>
+                </v-card>
             </v-col>
         </v-row>
     </v-container>
@@ -70,7 +77,6 @@ export default {
     data(){
         return{
             defaultAvi: require('@/assets/dummy-avatar.jpg'),
-            
         }
     },
     computed: {

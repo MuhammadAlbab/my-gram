@@ -13,7 +13,7 @@ const routes = [
     meta: {home: true},
   },
   {
-    path: '/dashboard/',
+    path: '/dashboard',
     meta: {auth: true},
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
@@ -26,14 +26,14 @@ const routes = [
         component: () => import(/* webpackChunkName: "login" */ '../views/user/Explore.vue')
       },
       {
-        path: 'favorites',
-        name: 'Favorites',
-        component: () => import(/* webpackChunkName: "login" */ '../views/user/Favorites.vue')
-      },
-      {
-        path: 'mypost',
+        path: '/mypost',
         name: 'MyPost',
         component: () => import(/* webpackChunkName: "login" */ '../views/user/MyPost.vue')
+      },
+      {
+        path: '/favorites',
+        name: 'Favorites',
+        component: () => import(/* webpackChunkName: "login" */ '../views/user/Favorites.vue')
       },
     ]
   },
