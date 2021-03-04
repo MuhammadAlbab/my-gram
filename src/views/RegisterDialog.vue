@@ -7,7 +7,7 @@
             <div class="body-1">Password: demo12345</div>
         </v-container>
         <v-form
-        ref="form"
+            ref="form"
         >
             <v-card-text>
                 <v-alert 
@@ -18,31 +18,35 @@
                     Gagal Daftar, Coba lagi!
                 </v-alert>
             <v-text-field
-            v-model="username"
-            label="Name"
-            :rules="usernameRules"
-            outlined
+                v-model="username"
+                label="Name"
+                :rules="usernameRules"
+                outlined
+                @keyup.enter="clickRegister"
             ></v-text-field>
             <v-textarea
-            v-model="bio"
-            label="Bio"
-            :rules="bioRules"
-            placeholder="Tell us a little bit about your self"
-            outlined
+                v-model="bio"
+                label="Bio"
+                :rules="bioRules"
+                placeholder="Tell us a little bit about your self"
+                outlined
+                @keyup.enter="clickRegister"
             ></v-textarea>
             <v-text-field
-            v-model="email"
-            label="E-mail"
-            :rules="emailRules"
-            outlined
+                v-model="email"
+                label="E-mail"
+                :rules="emailRules"
+                outlined
+                @keyup.enter="clickRegister"
             ></v-text-field>
             <v-text-field
-            v-model="password"
-            label="Password"
-            :rules="passwordRules"
-            outlined
-            :type="showPassword ? 'text' : 'password'" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" 
-            @click:append="clickPassword"
+                v-model="password"
+                label="Password"
+                :rules="passwordRules"
+                outlined
+                :type="showPassword ? 'text' : 'password'" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" 
+                @click:append="clickPassword"
+                @keyup.enter="clickRegister"
             ></v-text-field>
             </v-card-text>
             <v-card-actions class="justify-center pt-0">
@@ -69,17 +73,20 @@ export default {
             showPassword: false,
             registerAlert: false,
             usernameRules: [
-                v => (v && v.length >= 5) || 'Username must be atleast 5 or more characters'
+                v => !!v || 'Username is required',
+                v => v.length >= 5 || 'Username must be atleast 5 or more characters'
             ],
             bioRules: [
-                v => (v && v.length >= 20) || 'Bio must be atleast 20 or more characters'
+                v => !!v || 'Bio is required',
+                v => v.length >= 20 || 'Bio must be atleast 20 or more characters'
             ],
             emailRules: [
                 v => !!v || 'E-mail is required',
                 v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
             ],
             passwordRules: [
-                v => (v && v.length >= 8) || 'Password must be more than 7 characters'
+                v => !!v || 'Password is required',
+                v => v.length >= 8 || 'Password must be more than 7 characters'
             ],
             isLoading: false
             

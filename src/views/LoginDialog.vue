@@ -6,35 +6,39 @@
             <div class="body-1">Password: demo12345</div>
         </v-container>
         <v-form
-        ref="form"
+            ref="form"   
         >
             <v-alert 
                 color="error" 
                 type="error" 
                 :value="loginAlert"
-                transition="slide-y-transition">
+                transition="slide-y-transition"
+            >
                 Maaf anda belum terdaftar, lakukan register terlebih dahulu! atau pastikan data yang anda masukan benar!
             </v-alert>
             <v-card-text class="pb-0">
-            <v-text-field
-            v-model="email"
-            label="E-mail"
-            outlined
-            :rules="emailRules"
-            ></v-text-field>
-            <v-text-field
-            v-model="password"
-            label="Password"
-            outlined
-            :type="showPassword ? 'text' : 'password'" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" 
-            @click:append="clickPassword"
-            ></v-text-field>
+                <v-text-field
+                    v-model="email"
+                    label="E-mail"
+                    outlined
+                    :rules="emailRules"
+                    @keyup.enter="clickLogin"
+                ></v-text-field>
+                <v-text-field
+                    v-model="password"
+                    label="Password"
+                    outlined
+                    :rules="passwordRules"
+                    :type="showPassword ? 'text' : 'password'" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" 
+                    @click:append="clickPassword"
+                    @keyup.enter="clickLogin"
+                ></v-text-field>
             </v-card-text>
             <v-card-actions class="justify-center pt-0">
                 <v-btn
-                text dark class="orange lighten-2"
-                @click="clickLogin"
-                :loading="isLoading"
+                    text dark class="orange lighten-2"
+                    @click="clickLogin"
+                    :loading="isLoading"
                 >
                 Login
                 </v-btn>
@@ -55,8 +59,11 @@ export default {
                 v => !!v || 'E-mail is required',
                 v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
             ],
+            passwordRules: [
+                v => !!v || 'Password is required',
+                v => v.length >= 8 || 'Password must be more than 7 characters'
+            ],
             isLoading: false
-            
         }
     },
     methods: {

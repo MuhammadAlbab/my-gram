@@ -23,24 +23,26 @@
                     ref="form"
                 >
                     <v-text-field
-                    outlined
-                    v-model="username"
-                    :rules="usernameRules"
-                    label="Name"
+                        outlined
+                        v-model="username"
+                        :rules="usernameRules"
+                        label="Name"
                     ></v-text-field>
                     <v-textarea
-                    outlined
-                    v-model="bio"
-                    :rules="bioRules"
-                    name="input-7-1"
-                    label="Bio"
+                        outlined
+                        v-model="bio"
+                        :rules="bioRules"
+                        name="input-7-1"
+                        label="Bio"
+                        @keyup.enter="updateProfile"
                     ></v-textarea>
                     <v-file-input
-                    prepend-icon="mdi-camera"
-                    accept="image/*"
-                    label="New Avatar"
-                    v-model="file"
-                    show-size
+                        prepend-icon="mdi-camera"
+                        accept="image/*"
+                        label="New Avatar"
+                        v-model="file"
+                        show-size
+                        @keyup.enter="updateProfile"
                     ></v-file-input>
                     <p class="mb-0">Current Avatar: 
                         <template v-if="oldImage">
@@ -98,10 +100,12 @@ export default {
             bio: '',
             oldImage: '',
             usernameRules: [
-                v => (v && v.length >= 5) || 'Username must be more than 5 characters'
+                v => !!v || 'Username is required',
+                v => v.length >= 5 || 'Username must be atleast 5 or more characters'
             ],
             bioRules: [
-                v => (v && v.length >= 20) || 'Bio must be more than 20 characters'
+                v => !!v || 'Bio is required',
+                v => v.length >= 20 || 'Bio must be atleast 20 or more characters'
             ],
             file: null,
             dialog: false,
