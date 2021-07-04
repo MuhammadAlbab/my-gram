@@ -1,25 +1,24 @@
-import Vue from 'vue'
-import App from './App.vue'
-import router from './router'
-import store from './store'
-import vuetify from './plugins/vuetify'
-import { auth } from '@/firebase'
+import Vue from "vue";
+import App from "./App.vue";
+import router from "./router";
+import store from "./store";
+import vuetify from "./plugins/vuetify";
+import { auth } from "@/firebase";
+require("dotenv").config();
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 
-let app
-auth.onAuthStateChanged(user => {
-  if(!app){
+let app;
+auth.onAuthStateChanged((user) => {
+  if (!app) {
     new Vue({
       router,
       vuetify,
       store,
-      render: h => h(App)
-    }).$mount('#app')
+      render: (h) => h(App),
+    }).$mount("#app");
   }
   if (user) {
-    store.dispatch('getUserProfile', user)
+    store.dispatch("getUserProfile", user);
   }
-})
-
-
+});

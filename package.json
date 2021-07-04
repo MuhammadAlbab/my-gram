@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
+    "dotenv": "^10.0.0",
     "firebase": "^8.2.3",
     "moment": "^2.29.1",
     "vue": "^2.6.11",
